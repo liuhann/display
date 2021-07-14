@@ -1,0 +1,21 @@
+{
+  "name": "display-workspace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "postversion": "npm run build-src && npm publish",
+    "build": "build-fc",
+    "build-src": "build-fc --no-minimize",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@interactjs/actions": "^1.10.11",
+    "@interactjs/auto-start": "^1.10.11",
+    "@interactjs/interact": "^1.10.11",
+    "selecto": "^1.12.1"
+  }
+}
