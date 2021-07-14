@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import Moveable from 'moveable'
 import Selecto from 'selecto'
+import { DATA_DISPLAY_ELEMENT_ID } from '../const'
+import { getParentDisplayElement } from '../utils/utils'
 
 const setElementMovable = (root, el) => {
   const moveable = new Moveable(root, {
@@ -51,11 +53,16 @@ export default ({
   const ref = React.createRef()
   useEffect(() => {
     const root = ref.current
+    // 单项选择及操作
+    let movableTarget = null
+    // 多项选择、批量移动的
+    let movableGroup = null
+
     for (const element of rootElements) {
       const div = document.createElement('div')
       div.className = 'element-wrapper'
 
-      div.setAttribute('fcid', element.id)
+      div.setAttribute(DATA_DISPLAY_ELEMENT_ID, element.id)
       div.setAttribute('id', element.id)
       div.style.position = 'absolute'
       div.style.left = element.x + 'px'
@@ -88,17 +95,25 @@ export default ({
       // The rate at which the target overlaps the drag area to be selected. (default: 100)
       hitRate: 100
     })
-    let movableTarget = null
+
     selecto.on('dragStart', (e) => {
       // e.stop()
       const inputEvent = e.inputEvent
       const target = inputEvent.target
+      const fcViewWrapper = getParentDisplayElement(target)
 
-      if (target && target.getAttribute('fcid')) {
-        if (movableTarget) {
+      if (fcViewWrapper) {
+        // 选中其他节点， destory 初始化当前选中
+        if (movableTarget && movableTarget.target !== fcViewWrapper) {
           movableTarget.destroy()
+          movableTarget = setElementMovable(root, fcViewWrapper)
+          movableTarget.dragStart(inputEvent)
         }
-        movableTarget = setElementMovable(root, target)
+        // 未选中， 初始化当前选中
+        if (!movableTarget) {
+          movableTarget = setElementMovable(root, fcViewWrapper)
+          movableTarget.dragStart(inputEvent)
+        }
         e.stop()
       } else {
         if (movableTarget) {
@@ -108,11 +123,13 @@ export default ({
       }
     })
     selecto.on('dragEnd', (e) => {
-      // e.stop()
-      if (e.datas.startSelectedTargets.length) {
-        movableTarget = setElementMovable(root, e.datas.startSelectedTargets[0])
-      }
       console.log('drag End', e)
+    })
+
+    selecto.on('select', e => {
+      e.added.forEach(el => {
+        movableTarget = setElementMovable(root, el)
+      })
     })
   }, [])
 
