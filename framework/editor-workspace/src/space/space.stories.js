@@ -21,18 +21,19 @@ export default {
 export const Primary = WorkSpace.bind({})
 Primary.args = {
   rootElements: [{
-    id: 'abcd',
+    id: 'a',
     x: 24,
     y: 40,
     width: 200,
     height: 200
   }, {
-    id: 'abcd',
+    id: 'b',
     x: 60,
     y: 100,
     width: 200,
     height: 200
   }],
+  zoom: 1,
   width: 1200,
   height: 800
 }

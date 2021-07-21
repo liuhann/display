@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Moveable from 'moveable'
 import Selecto from 'selecto'
+import Ruler from '../ruler/ruler.jsx'
 import { DATA_DISPLAY_ELEMENT_ID } from '../const'
 import { getParentDisplayElement } from '../utils/utils'
 
-const setElementMovable = (root, el) => {
+const setElementMovable = (root, el, zoom) => {
+  const otherWrappers = [...document.querySelectorAll('.element-wrapper')].filter(each => each !== el)
   const moveable = new Moveable(root, {
     // If you want to use a group, set multiple targets(type: Array<HTMLElement | SVGElement>).
     // target: [].slice.call(document.querySelectorAll('.element-wrapper')),
@@ -14,6 +16,7 @@ const setElementMovable = (root, el) => {
     snappable: true,
     keepRatio: false,
     throttleResize: 0,
+    elementGuidelines: otherWrappers,
     renderDirections: ['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'],
     edge: false,
     zoom: 1,
@@ -22,25 +25,23 @@ const setElementMovable = (root, el) => {
   })
 
   moveable.on('resizeStart', e => {
-    // e.setOrigin(['%', '%'])
-    // e.dragStart && e.dragStart.set(frame.translate)
   }).on('drag', e => {
     const beforeDelta = e.beforeDelta
-    e.target.style.left = (parseInt(e.target.style.left) + beforeDelta[0]) + 'px'
-    e.target.style.top = (parseInt(e.target.style.top) + beforeDelta[1]) + 'px'
+    e.target.style.left = (parseFloat(e.target.style.left) + beforeDelta[0]) + 'px'
+    e.target.style.top = (parseFloat(e.target.style.top) + beforeDelta[1]) + 'px'
   }).on('resize', e => {
     const beforeDelta = e.drag.beforeDelta
     e.target.style.width = `${e.width}px`
     e.target.style.height = `${e.height}px`
-    e.target.style.left = (parseInt(e.target.style.left) + beforeDelta[0]) + 'px'
-    e.target.style.top = (parseInt(e.target.style.top) + beforeDelta[1]) + 'px'
+    e.target.style.left = (parseFloat(e.target.style.left) + beforeDelta[0]) + 'px'
+    e.target.style.top = (parseFloat(e.target.style.top) + beforeDelta[1]) + 'px'
     // e.target.style.transform = `translate(${beforeTranslate[0]}px, ${beforeTranslate[1]}px)`
   })
 
   return moveable
 }
 
-const setElementsMovable = (root, els) => {
+const setElementsMovable = (root, els, zoom) => {
   const moveable = new Moveable(root, {
     // If you want to use a group, set multiple targets(type: Array<HTMLElement | SVGElement>).
     // target: [].slice.call(document.querySelectorAll('.element-wrapper')),
@@ -50,10 +51,11 @@ const setElementsMovable = (root, els) => {
     draggable: true,
     throttleDrag: 0,
     keepRatio: false,
+    zoom: 1,
     resizable: true,
     startDragRotate: 0,
     throttleDragRotate: 0,
-    zoom: 1,
+    elementGuidelines: [document.querySelector('.element-wrapper')],
     origin: true,
     padding: { left: 0, top: 0, right: 0, bottom: 0 }
   })
@@ -63,8 +65,8 @@ const setElementsMovable = (root, els) => {
   }).on('dragGroup', ({ events }) => {
     events.forEach((ev, i) => {
       const beforeDelta = ev.beforeDelta
-      ev.target.style.left = (parseInt(ev.target.style.left) + beforeDelta[0]) + 'px'
-      ev.target.style.top = (parseInt(ev.target.style.top) + beforeDelta[1]) + 'px'
+      ev.target.style.left = (parseInt(ev.target.style.left) + zoom * beforeDelta[0]) + 'px'
+      ev.target.style.top = (parseInt(ev.target.style.top) + zoom * beforeDelta[1]) + 'px'
 
       // frames[i].translate = ev.beforeTranslate
       //   ev.target.style.transform =
@@ -85,11 +87,19 @@ const setElementsMovable = (root, els) => {
   return moveable
 }
 
-const initSelecto = (root, selector) => {
+const initSelecto = ({
+  root,
+  selector,
+  zoom,
+  containerDrag
+}) => {
   // 单项选择及操作
   let movableTarget = null
   // 多项选择、批量移动的
   let movableGroup = null
+  // 是否在移动图纸
+  let isMovingContainer = false
+
   const selecto = new Selecto({
     // The container to add a selection element
     container: root,
@@ -107,6 +117,7 @@ const initSelecto = (root, selector) => {
     continueSelect: false,
     // Determines which key to continue selecting the next target via keydown and keyup.
     toggleContinueSelect: 'shift',
+    // zoom: 1 / zoom,
     // The container for keydown and keyup events
     keyContainer: window,
     // The rate at which the target overlaps the drag area to be selected. (default: 100)
@@ -128,22 +139,7 @@ const initSelecto = (root, selector) => {
       return
     }
 
-    // 如果有选中节点或者群组，判断是否还继续拖拽处理
-    const fcViewWrapper = getParentDisplayElement(target)
-    if (fcViewWrapper) {
-      if (movableTarget) {
-        if (movableTarget.target !== fcViewWrapper) {
-          movableTarget.destroy()
-          movableTarget = setElementMovable(root, fcViewWrapper)
-          movableTarget.dragStart(inputEvent)
-        }
-      } else {
-        // 有选中节点，但是没有已存的目标和群组： 选中当前节点
-        movableTarget = setElementMovable(root, fcViewWrapper)
-        movableTarget.dragStart(inputEvent)
-      }
-      e.stop()
-    } else {
+    if (inputEvent.ctrlKey) { // 移动整个画面
       if (movableTarget) {
         movableTarget.destroy()
         movableTarget = null
@@ -152,19 +148,56 @@ const initSelecto = (root, selector) => {
         movableGroup.destroy()
         movableGroup = null
       }
+      isMovingContainer = true
+    } else {
+      isMovingContainer = false
+      // 如果有选中节点或者群组，判断是否还继续拖拽处理 (选择到了节点就结束拖拽了)
+      const fcViewWrapper = getParentDisplayElement(target)
+      if (fcViewWrapper) {
+        if (movableTarget) {
+          if (movableTarget.target !== fcViewWrapper) {
+            movableTarget.destroy()
+            movableTarget = setElementMovable(root, fcViewWrapper, zoom)
+            movableTarget.dragStart(inputEvent)
+          }
+        } else {
+          // 有选中节点，但是没有已存的目标和群组： 选中当前节点
+          movableTarget = setElementMovable(root, fcViewWrapper, zoom)
+          movableTarget.dragStart(inputEvent)
+        }
+        e.stop()
+      } else {
+        if (movableTarget) {
+          movableTarget.destroy()
+          movableTarget = null
+        }
+        if (movableGroup) {
+          movableGroup.destroy()
+          movableGroup = null
+        }
+      }
+    }
+  })
+
+  selecto.on('drag', e => {
+    if (isMovingContainer) {
+      // 隐藏drag层
+      e.currentTarget.target.style.display = 'none'
+      containerDrag(e)
     }
   })
   selecto.on('dragEnd', (e) => { })
   selecto.on('select', e => {
+    if (isMovingContainer) {
+      return
+    }
+
     if (e.selected.length === 0) {
       if (movableTarget) {
         movableTarget.destroy()
         movableTarget = null
       }
-    }
-
-    // 选择一个节点处理
-    if (e.selected.length === 1) {
+    } else if (e.selected.length === 1) { // 选择一个节点处理
       const selectedElement = e.selected[0]
       if (movableTarget) {
         if (movableTarget.target === selectedElement) {
@@ -181,10 +214,7 @@ const initSelecto = (root, selector) => {
         movableGroup.destroy()
         movableGroup = null
       }
-    }
-
-    // 选择超过一个节点
-    if (e.selected.length > 1) {
+    } else if (e.selected.length > 1) { // 选择超过一个节点
       if (movableTarget) {
         movableTarget.destroy()
         movableTarget = null
@@ -192,20 +222,35 @@ const initSelecto = (root, selector) => {
       if (movableGroup) {
         movableGroup.destroy()
       }
-      movableGroup = setElementsMovable(root, e.selected)
+      movableGroup = setElementsMovable(root, e.selected, zoom)
     }
   })
+
+  return {
+    movableGroup,
+    movableTarget,
+    selecto
+  }
 }
 
 export default ({
   rootElements, // 文件定义
   width,
   height,
+  viewPortWidth = 800,
+  viewPortHeight = 600,
+  zoom,
   change // 输出文件定义
 }) => {
   const ref = React.createRef()
+  const workspaceRef = React.createRef()
+  const sceneRef = React.createRef()
+
+  const [sceneX, setSceneX] = useState(0)
+  const [sceneY, setSceneY] = useState(0)
+
   useEffect(() => {
-    const root = ref.current
+    const root = sceneRef.current
 
     for (const element of rootElements) {
       const div = document.createElement('div')
@@ -223,16 +268,114 @@ export default ({
       root.appendChild(div)
     }
 
-    initSelecto(root, '.element-wrapper')
+    const {
+      movableGroup,
+      movableTarget,
+      selecto
+    } = initSelecto({
+      root: workspaceRef.current,
+      selector: '.element-wrapper',
+      zoom,
+      containerDrag: ({ deltaX, deltaY }) => {
+        setSceneX(sceneX => parseFloat(sceneX) + deltaX)
+        setSceneY(sceneY => parseFloat(sceneY) + deltaY)
+      }
+    })
 
+    return () => {
+      if (movableGroup) {
+        movableGroup.destroy()
+      }
+      if (movableTarget) {
+        movableTarget.destroy()
+      }
+      selecto.destroy()
+      for (const child of root.children) {
+        root.removeChild(child)
+      }
+    }
   }, [])
 
+  const workspaceStyle = {
+    position: 'relative',
+    background: '#eee',
+    overflow: 'hidden'
+  }
   const style = {
     position: 'relative',
     width: width ? width + 'px' : '100%',
     height: height ? height + 'px' : '100%',
     border: '1px solid #eee'
   }
+  if (zoom !== 1) {
+    style.transform = `scale(${zoom})`
+  }
 
-  return <div id='space' style={style} ref={ref} />
+  return (
+    <div id='editor-workspace' ref={workspaceRef} style={workspaceStyle}>
+      <div className='editing-area' ref={ref} style={style}>
+        <div
+          className='screen' style={{
+            left: sceneX + 'px',
+            top: sceneY + 'px',
+            position: 'absolute',
+            background: '#fff',
+            width: viewPortWidth + 'px',
+            height: viewPortHeight + 'px'
+          }} ref={sceneRef}
+        />
+      </div>
+      <Ruler
+        type='horizontal'
+        zoom={zoom}
+        unit={50}
+        width={width - 30}
+        height={24}
+        direction='start'
+        scrollPos={-sceneX}
+        style={{
+          position: 'absolute',
+          left: '24px',
+          top: 0,
+          zIndex: 9999,
+          width: (width - 30) + 'px',
+          height: '24px'
+        }}
+        backgroundColor='#333333'
+        textColor='#ffffff'
+        lineColor='#777777'
+      />
+      <div
+        className='ruler-lt' style={{
+          left: 0,
+          top: 0,
+          zIndex: 9999,
+          position: 'absolute',
+          width: '24px',
+          height: '24px',
+          backgroundColor: '#333333'
+        }}
+      />
+      <Ruler
+        type='vertical'
+        zoom={zoom}
+        unit={50}
+        width={24}
+        height={height - 24}
+        direction='start'
+        scrollPos={-sceneY}
+        style={{
+          position: 'absolute',
+          left: 0,
+          zIndex: 9999,
+          top: '24px',
+          width: '24px',
+          height: (height - 24) + 'px'
+        }}
+        backgroundColor='#333333'
+        textColor='#ffffff'
+        lineColor='#777777'
+      />
+    </div>
+  )
 }
