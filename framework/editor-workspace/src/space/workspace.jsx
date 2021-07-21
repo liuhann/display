@@ -5,7 +5,7 @@ import Ruler from '../ruler/ruler.jsx'
 import { DATA_DISPLAY_ELEMENT_ID } from '../const'
 import { getParentDisplayElement } from '../utils/utils'
 
-const setElementMovable = (root, el, zoom) => {
+const setElementMovable = (root, el) => {
   const otherWrappers = [...document.querySelectorAll('.element-wrapper')].filter(each => each !== el)
   const moveable = new Moveable(root, {
     // If you want to use a group, set multiple targets(type: Array<HTMLElement | SVGElement>).
@@ -14,6 +14,7 @@ const setElementMovable = (root, el, zoom) => {
     resizable: true,
     draggable: true,
     snappable: true,
+    snapCenter: true,
     keepRatio: false,
     throttleResize: 0,
     elementGuidelines: otherWrappers,
@@ -41,10 +42,8 @@ const setElementMovable = (root, el, zoom) => {
   return moveable
 }
 
-const setElementsMovable = (root, els, zoom) => {
+const setElementsMovable = (root, els) => {
   const moveable = new Moveable(root, {
-    // If you want to use a group, set multiple targets(type: Array<HTMLElement | SVGElement>).
-    // target: [].slice.call(document.querySelectorAll('.element-wrapper')),
     target: els,
     defaultGroupRotate: 0,
     defaultGroupOrigin: '50% 50%',
@@ -65,8 +64,8 @@ const setElementsMovable = (root, els, zoom) => {
   }).on('dragGroup', ({ events }) => {
     events.forEach((ev, i) => {
       const beforeDelta = ev.beforeDelta
-      ev.target.style.left = (parseInt(ev.target.style.left) + zoom * beforeDelta[0]) + 'px'
-      ev.target.style.top = (parseInt(ev.target.style.top) + zoom * beforeDelta[1]) + 'px'
+      ev.target.style.left = (parseFloat(ev.target.style.left) + beforeDelta[0]) + 'px'
+      ev.target.style.top = (parseFloat(ev.target.style.top) + beforeDelta[1]) + 'px'
 
       // frames[i].translate = ev.beforeTranslate
       //   ev.target.style.transform =
@@ -79,8 +78,8 @@ const setElementsMovable = (root, els, zoom) => {
       // frame.translate = beforeTranslate
       ev.target.style.width = `${ev.width}px`
       ev.target.style.height = `${ev.height}px`
-      ev.target.style.left = (parseInt(ev.target.style.left) + beforeDelta[0]) + 'px'
-      ev.target.style.top = (parseInt(ev.target.style.top) + beforeDelta[1]) + 'px'
+      ev.target.style.left = (parseFloat(ev.target.style.left) + beforeDelta[0]) + 'px'
+      ev.target.style.top = (parseFloat(ev.target.style.top) + beforeDelta[1]) + 'px'
     })
   })
 
@@ -275,7 +274,6 @@ export default ({
     } = initSelecto({
       root: workspaceRef.current,
       selector: '.element-wrapper',
-      zoom,
       containerDrag: ({ deltaX, deltaY }) => {
         setSceneX(sceneX => parseFloat(sceneX) + deltaX)
         setSceneY(sceneY => parseFloat(sceneY) + deltaY)
@@ -316,8 +314,8 @@ export default ({
       <div className='editing-area' ref={ref} style={style}>
         <div
           className='screen' style={{
-            left: sceneX + 'px',
-            top: sceneY + 'px',
+            left: (sceneX + 24) + 'px',
+            top: (sceneY + 24) + 'px',
             position: 'absolute',
             background: '#fff',
             width: viewPortWidth + 'px',
