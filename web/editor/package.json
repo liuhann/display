@@ -1,0 +1,15 @@
+{
+  "name": "display-editor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "postversion": "npm run build-src && npm publish",
+    "build": "build-fc",
+    "build-src": "build-fc --no-minimize"
+  },
+  "author": "liuhann@gmail.com",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {}
+}
