@@ -1,7 +1,7 @@
 const path = require('path')
 const svgToMiniDataURI = require('mini-svg-data-uri')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 module.exports = {
   entry: './src/index.js',
   mode: 'development',
@@ -77,6 +77,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: 'Development',
       template: path.resolve(__dirname, './index.html')

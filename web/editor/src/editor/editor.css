@@ -1,0 +1,75 @@
+html, body {
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Nunito Sans", -apple-system, ".SFNSText-Regular", "San Francisco", BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    margin: 0px;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    color: rgb(51, 51, 51);
+    background: rgb(246, 249, 252);
+    overflow: hidden;
+}
+
+.nav-wrapper {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    box-sizing: border-box;
+    opacity: 1;
+}
+
+.nav-drag, .panel-drag {
+    z-index: 10;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    color: rgba(0, 0, 0, 0.1);
+    transition: color 0.2s linear 0s, background-position 0.2s linear 0s, background-size 0.2s linear 0s, background 0.2s linear 0s;
+    cursor: col-resize;
+    height: 100%;
+    width: 10px;
+    background-image: radial-gradient(at center center, rgba(0, 0, 0, 0.2) 0%, transparent 70%, transparent 100%);
+    background-size: 50px 100%;
+    background-position: 10px 50%;
+    background-repeat: no-repeat;
+}
+
+.nav-drag:hover {
+    background-image: radial-gradient(at center center, rgba(0, 0, 0, 0.2) 0%, transparent 70%, transparent 100%);
+    background-size: 50px 100%;
+    background-position: 0px 50%;
+    background-repeat: no-repeat;
+}
+.nav-dragging {
+    cursor: default;
+}
+
+.main {
+    position: absolute;
+    box-sizing: border-box;
+    top: 10px;
+    bottom: 10px;
+    right: 10px;
+    opacity: 1;
+    z-index: 9;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: rgb(0 0 0 / 10%) 0px 1px 5px 0px;
+    background-color: #fff;
+}
+
+.main .panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+}

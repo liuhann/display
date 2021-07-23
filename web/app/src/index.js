@@ -1,8 +1,8 @@
-import AsyncBoot from './booter/AsyncBoot.js'
+import AsyncBootReact from 'async-boot-react'
 import editor from 'display-editor'
 
-const app = new AsyncBoot({
+const reactApp = new AsyncBootReact({
   packages: [editor]
 })
 
-app.startUp()
+reactApp.startUp()

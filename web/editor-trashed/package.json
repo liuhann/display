@@ -1,0 +1,16 @@
+{
+  "name": "display-trashed",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "postversion": "npm run build-src && npm publish",
+    "build": "build-fc",
+    "build-src": "build-fc --no-minimize"
+  },
+  "author": "liuhann@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "react-draggable": "^4.4.3"
+  }
+}
