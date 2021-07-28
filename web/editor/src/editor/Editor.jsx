@@ -58,8 +58,7 @@ export default class Editor extends React.Component {
               onDrag={handlePanelDrag}
             >
               <div />
-            </Draggable>
-          }
+            </Draggable>}
 
           <div
             className='nav-wrapper' style={{
