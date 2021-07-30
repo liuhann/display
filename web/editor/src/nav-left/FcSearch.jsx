@@ -8,15 +8,19 @@ import FormControl from '@material-ui/core/FormControl'
 import TextField from '@material-ui/core/TextField'
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import StoreIcon from '@material-ui/icons/Store'
+import StorefrontIcon from '@material-ui/icons/Storefront'
 import CancelIcon from '@material-ui/icons/Cancel'
 
 const useStyles = makeStyles((theme) => ({
   margin: {
-    margin: theme.spacing(1)
+    marginBottom: theme.spacing(2),
+    padding: '0 10px',
+    boxSizing: 'border-box',
+    width: '100%'
   },
   help: {
-    '& .MuiFormLabel-root': {
-      fontSize: '12px'
+    '&': {
+      fontSize: '14px'
     }
   }
 }))
@@ -30,38 +34,41 @@ export default ({
 
   const clearValue = () => {
     setSearchValue('')
+    onInput && onInput('')
   }
 
   const CancelButton = (
     <InputAdornment position='end'>
+      {searchValue &&
+        <IconButton
+          aria-label='toggle password visibility'
+          style={{ padding: '6px', fontWeight: 600 }}
+          onClick={clearValue}
+        >
+          <CancelIcon style={{ fontSize: '16px' }} />
+        </IconButton>}
       <IconButton
         aria-label='toggle password visibility'
+        color='primary'
         style={{ padding: '6px', fontWeight: 600 }}
         onClick={clearValue}
       >
-        <CancelIcon style={{ fontSize: '16px' }} />
+        <StorefrontIcon style={{ fontSize: '20px' }} />
       </IconButton>
     </InputAdornment>
   )
 
-  const inputProps = {}
-  if (searchValue) {
-    inputProps.endAdornment = CancelButton
-  }
-
   return (
     <FormControl className={classes.margin}>
-      <TextField
+      <Input
         className={classes.help}
-        label='按名称查找组件' size='small'
-        value={searchValue}
-        onChange={
+        placeholder='按名称查找组件' fullWidth value={searchValue} endAdornment={CancelButton} inputProps={{ 'aria-label': 'description' }} onChange={
           event => {
             const value = event.target.value
             setSearchValue(value)
+            onInput && onInput(value)
           }
         }
-        InputProps={inputProps}
       />
     </FormControl>
   )

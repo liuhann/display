@@ -147,20 +147,18 @@ export default ({
     setAnchorEl(null)
   }
   return (
-    <div className='sidebar-header'>
-      <div class='css-1lsh4kf'>
-        <Button
-          className={classes.button}
-          style={{ padding: '2px', fontWeight: 600, color: grey[900] }}
-          startIcon={<BrokenImageIcon size='large' fontSize='large' style={{ color: green[500], fontSize: '28px' }} />}
-        >
-          DISPLAY
-        </Button>
-        <IconButton aria-label='delete' size='small' variant='outlined' className={classes.headerIcon} onClick={handleClick}>
-          <MoreHorizIcon fontSize='inherit' className={classes.margin} />
-        </IconButton>
-        <TitleMenu anchorEl={anchorEl} handleClose={handleClose} />
-      </div>
+    <div className='sidebar-header' style={{ padding: '10px' }}>
+      <Button
+        className={classes.button}
+        style={{ padding: '2px', fontWeight: 600, color: grey[900] }}
+        startIcon={<BrokenImageIcon size='large' fontSize='large' style={{ color: green[500], fontSize: '28px' }} />}
+      >
+        DISPLAY
+      </Button>
+      <IconButton aria-label='delete' size='small' variant='outlined' className={classes.headerIcon} onClick={handleClick}>
+        <MoreHorizIcon fontSize='inherit' className={classes.margin} />
+      </IconButton>
+      <TitleMenu anchorEl={anchorEl} handleClose={handleClose} />
     </div>
   )
 }

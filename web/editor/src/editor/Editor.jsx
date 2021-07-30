@@ -1,11 +1,13 @@
 import React from 'react'
 import './editor.css'
 import Draggable from 'react-draggable'
+import NavLeft from '../nav-left/NavLeft.jsx'
 import IconButton from '@material-ui/core/IconButton'
+import treeData from '../treeData.js'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 
 export default class Editor extends React.Component {
-  constructor () {
+  constructor (props) {
     super()
     this.state = {
       windowWidth: window.innerWidth,
@@ -66,7 +68,7 @@ export default class Editor extends React.Component {
             }}
           >
             <div className='nav-content'>
-              这里是正文
+              <NavLeft treeData={treeData} />
             </div>
           </div>
 

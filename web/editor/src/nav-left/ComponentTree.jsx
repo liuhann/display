@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useRef } from 'react'
 
 import { makeStyles } from '@material-ui/core/styles'
 import TreeView from '@material-ui/lab/TreeView'
@@ -6,37 +6,19 @@ import TreeItem from '@material-ui/lab/TreeItem'
 import Typography from '@material-ui/core/Typography'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import ArrowRightIcon from '@material-ui/icons/ArrowRight'
+import Avatar from '@material-ui/core/Avatar'
+import Collapse from '@material-ui/core/Collapse'
 import Label from '@material-ui/icons/Label'
 
 const useTreeItemStyles = makeStyles((theme) => ({
-  root: {
-    color: theme.palette.text.secondary,
-    '&:hover > $content': {
-      backgroundColor: theme.palette.action.hover
-    },
-    '&:focus > $content, &$selected > $content': {
-      backgroundColor: `var(--tree-view-bg-color, ${theme.palette.grey[400]})`,
-      color: 'var(--tree-view-color)'
-    },
-    '&:focus > $content $label, &:hover > $content $label, &$selected > $content $label': {
-      backgroundColor: 'transparent'
-    }
-  },
   content: {
-    color: theme.palette.text.secondary,
-    borderTopRightRadius: theme.spacing(2),
-    borderBottomRightRadius: theme.spacing(2),
-    paddingRight: theme.spacing(1),
     fontWeight: theme.typography.fontWeightMedium,
     '$expanded > &': {
       fontWeight: theme.typography.fontWeightRegular
     }
   },
   group: {
-    marginLeft: 0,
-    '& $content': {
-      paddingLeft: theme.spacing(2)
-    }
+    marginLeft: 0
   },
   expanded: {},
   selected: {},
@@ -44,10 +26,16 @@ const useTreeItemStyles = makeStyles((theme) => ({
     fontWeight: 'inherit',
     color: 'inherit'
   },
+  iconContainer: {
+    width: '0px'
+  },
   labelRoot: {
     display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(0.5, 0)
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  labelFolderRoot: {
+    padding: theme.spacing(0.5)
   },
   labelIcon: {
     marginRight: theme.spacing(1)
@@ -60,18 +48,29 @@ const useTreeItemStyles = makeStyles((theme) => ({
 
 function StyledTreeItem (props) {
   const classes = useTreeItemStyles()
-  const { labelText, labelIcon: LabelIcon, labelInfo, color, bgColor, ...other } = props
+  const { labelText, preview, isFolder, labelIcon: LabelIcon, labelInfo, color, bgColor, treeNodeHover, treeNodeOut, ...other } = props
 
+  const dragStartHandler = (event, preview) => {
+    // Create an image and then use it for the drag image.
+    // NOTE: change "example.gif" to a real image URL or the image
+    // will not be created and the default drag image will be used.
+    const img = new window.Image()
+    img.src = preview
+    event.dataTransfer.setDragImage(img, 100, 100)
+    treeNodeOut()
+  }
   return (
     <TreeItem
+      draggable={!isFolder}
+      onDragStart={(event) => !isFolder && dragStartHandler(event, preview)}
+      onMouseEnter={(event) => treeNodeHover && treeNodeHover(event.currentTarget.getBoundingClientRect())}
+      onMouseLeave={event => treeNodeOut && treeNodeOut()}
       label={
-        <div className={classes.labelRoot}>
-          <LabelIcon color='inherit' className={classes.labelIcon} />
+        <div className={isFolder ? classes.labelFolderRoot : classes.labelRoot}>
+          {preview &&
+            <Avatar alt='Remy Sharp' variant='rounded' src={preview} />}
           <Typography variant='body2' className={classes.labelText}>
             {labelText}
-          </Typography>
-          <Typography variant='caption' color='inherit'>
-            {labelInfo}
           </Typography>
         </div>
         }
@@ -80,10 +79,9 @@ function StyledTreeItem (props) {
         '--tree-view-bg-color': bgColor
       }}
       classes={{
-        root: classes.root,
+        iconContainer: isFolder ? '' : classes.iconContainer,
         content: classes.content,
         expanded: classes.expanded,
-        selected: classes.selected,
         group: classes.group,
         label: classes.label
       }}
@@ -94,58 +92,83 @@ function StyledTreeItem (props) {
 
 const useStyles = makeStyles({
   root: {
-    height: 264,
     flexGrow: 1,
-    maxWidth: 400
+    '& .wrapperInner-x': {
+      display: 'grid',
+      'grid-template-columns': 'repeat(3, 33.33%)'
+    }
   }
 })
 
-export default () => {
+const filterTreeData = (treeData, filter) => {
+  if (!filter || filter.name === '') {
+    return treeData
+  }
+  const targetTree = []
+  for (const pack of treeData) {
+    if (pack.packageLabel.indexOf(filter.name) > -1) {
+      targetTree.push(pack)
+    } else {
+      const componentsFiltered = []
+
+      for (const component of pack.components) {
+        if (component.label.indexOf(filter.name) > -1) {
+          componentsFiltered.push(component)
+        }
+      }
+
+      if (componentsFiltered.length) {
+        const packFiltered = {}
+        Object.assign(packFiltered, pack)
+        packFiltered.components = componentsFiltered
+        targetTree.push(packFiltered)
+      }
+    }
+  }
+  return targetTree
+}
+
+export default ({
+  treeData,
+  filter,
+  onTreeNodeHover,
+  onTreeNodeOut
+}) => {
   const classes = useStyles()
+  const RenderComponent = ({ data }) => {
+    return (
+      <StyledTreeItem
+        treeNodeHover={onTreeNodeHover}
+        treeNodeOut={onTreeNodeOut}
+        preview={data.preview}
+        nodeId={data.name}
+        labelText={data.label}
+      />
+    )
+  }
+
+  const RenderPackage = ({ data, handlePopoverOpen, handlePopoverClose }) => {
+    return (
+      <StyledTreeItem nodeId={data.packageName} labelText={data.packageLabel} isFolder>
+        <div className='wrapperInner-x' style={{ padding: '10px 0', display: 'grid', 'grid-template-columns': 'repeat(3, 33.33%)' }}>
+          {data.components.map((component, index) => <RenderComponent key={component.name} data={component} />)}
+        </div>
+      </StyledTreeItem>
+    )
+  }
+
+  const filteredTreeData = filterTreeData(treeData, filter)
 
   return (
-    <TreeView
-      className={classes.root}
-      defaultExpanded={['3']}
-      defaultCollapseIcon={<ArrowDropDownIcon />}
-      defaultExpandIcon={<ArrowRightIcon />}
-      defaultEndIcon={<div style={{ width: 24 }} />}
-    >
-      <StyledTreeItem nodeId='1' labelText='All Mail' labelIcon={Label} />
-      <StyledTreeItem nodeId='3' labelText='Categories' labelIcon={Label}>
-        <StyledTreeItem
-          nodeId='5'
-          labelText='Social'
-          labelInfo='90'
-          color='#1a73e8'
-          bgColor='#e8f0fe'
-          labelIcon={Label}
-        />
-        <StyledTreeItem
-          nodeId='6'
-          labelText='Updates'
-          labelInfo='2,294'
-          color='#e3742f'
-          bgColor='#fcefe3'
-          labelIcon={Label}
-        />
-        <StyledTreeItem
-          nodeId='7'
-          labelText='Forums'
-          labelInfo='3,566'
-          color='#a250f5'
-          bgColor='#f3e8fd'
-          labelIcon={Label}
-        />
-        <StyledTreeItem
-          nodeId='8'
-          labelText='Promotions'
-          labelInfo='733'
-          color='#3c8039'
-          bgColor='#e6f4ea'
-          labelIcon={Label}
-        />
-      </StyledTreeItem>
-    </TreeView>
+    <div>
+      <TreeView
+        className={classes.root}
+        defaultCollapseIcon={<ArrowDropDownIcon />}
+        defaultExpandIcon={<ArrowRightIcon />}
+        defaultEndIcon={<div style={{ width: 24 }} />}
+      >
+        {filteredTreeData.map((data, index) => <RenderPackage data={data} key={data.packageName} />)}
+      </TreeView>
+    </div>
   )
 }
