@@ -57,7 +57,7 @@ function StyledTreeItem (props) {
     const img = new window.Image()
     img.src = preview
     event.dataTransfer.setDragImage(img, 100, 100)
-    treeNodeOut()
+    treeNodeOut && treeNodeOut()
   }
   return (
     <TreeItem

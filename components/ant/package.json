@@ -1,0 +1,17 @@
+{
+  "name": "display-ant",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "liuhann@gmail.com",
+  "components": [{
+      "name": "Pagination",
+      "label": "分页",
+      "preview": "previews/Pagination.svg",
+      "code": "build/pagination.js"
+  }],
+  "license": "ISC"
+}

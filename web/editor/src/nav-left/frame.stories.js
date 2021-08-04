@@ -15,7 +15,9 @@ Nav.args = {
 }
 
 export const Header = SidebarHeader.bind({})
-Header.args = {}
+Header.args = {
+  checked: ['prop-panel']
+}
 
 export const Search = FcSearch.bind({})
 Search.args = {}

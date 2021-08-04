@@ -2,56 +2,115 @@ import React from 'react'
 import './editor.css'
 import Draggable from 'react-draggable'
 import NavLeft from '../nav-left/NavLeft.jsx'
-import IconButton from '@material-ui/core/IconButton'
-import treeData from '../treeData.js'
+import WorkSpace from '../space/workspace.jsx'
+import Toolbar from '../toolbar/Toolbar.jsx'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 
 export default class Editor extends React.Component {
   constructor (props) {
     super()
     this.state = {
-      windowWidth: window.innerWidth,
+      windowWidth: document.body.offsetWidth,
+      windowHeight: document.body.offsetHeight,
       navWidth: 260,
       panelWidth: 340,
-      showPanel: true
+      showPanel: true,
+      toolbarShow: {
+        fullScreen: false
+      }
     }
   }
 
+  getLayoutAttrs () {
+    const layoutAttrs = []
+    if (this.state.showPanel) {
+      layoutAttrs.push('prop-panel')
+    }
+    return layoutAttrs
+  }
+
   render () {
+    const { treeData } = this.props
+    const { windowWidth, windowHeight, navWidth, panelWidth, showPanel, toolbarShow } = this.state
+
+    // 切换全屏的操作
+    const { fullScreen } = toolbarShow
+    let workspaceWidth = 0
+    if (fullScreen) {
+      workspaceWidth = windowWidth
+    } else if (showPanel) {
+      workspaceWidth = windowWidth - navWidth - 20 - panelWidth
+    } else {
+      workspaceWidth = windowWidth - navWidth - 20
+    }
+
+    // 拖拽左侧导航及右侧面板的响应事件
     const handleDrag = (e, data) => {
       this.setState({
         navWidth: this.state.navWidth + data.deltaX
       })
     }
-
     const handlePanelDrag = (e, data) => {
       this.setState({
         panelWidth: this.state.panelWidth - data.deltaX
       })
     }
 
+    // 左侧导航菜单切换事件
+    const onLeftNavMenuCommand = (cmd) => {
+      switch (cmd) {
+        case 'toggle-panel':
+          this.setState({
+            showPanel: !this.state.showPanel
+          })
+      }
+    }
+
+    // 关闭面板处理
     const closePanel = () => {
       this.setState({
         showPanel: false
       })
     }
 
-    const workspaceWidth = this.state.windowWidth - this.state.navWidth - 10 - this.state.panelWidth
+    // Toolbar show切换事件
+    const onToolbarShowChange = (show) => {
+      this.setState({
+        toolbarShow: Object.assign(toolbarShow, show)
+      })
+    }
+
+    const mainStyle = {
+      left: (navWidth + 10) + 'px',
+      top: '10px',
+      bottom: '10px',
+      right: '10px',
+      borderRadius: '4px'
+    }
+    if (fullScreen) {
+      mainStyle.left = 0
+      mainStyle.top = 0
+      mainStyle.bottom = 0
+      mainStyle.borderRadius = 0
+      mainStyle.right = 0
+    }
+
     return (
       <div id='editor'>
         <div className='main-content'>
-          <Draggable
-            axis='x'
-            defaultClassName='nav-drag'
-            defaultClassNameDragging='nav-dragging'
-            bounds={{ left: 200 }}
-            defaultPosition={{ x: this.state.navWidth, y: 0 }}
-            onDrag={handleDrag}
-          >
-            <div />
-          </Draggable>
+          {!fullScreen &&
+            <Draggable
+              axis='x'
+              defaultClassName='nav-drag'
+              defaultClassNameDragging='nav-dragging'
+              bounds={{ left: 200 }}
+              defaultPosition={{ x: this.state.navWidth, y: 0 }}
+              onDrag={handleDrag}
+            >
+              <div />
+            </Draggable>}
 
-          {this.state.showPanel &&
+          {showPanel && !fullScreen &&
             <Draggable
               axis='x'
               defaultClassName='panel-drag'
@@ -62,30 +121,32 @@ export default class Editor extends React.Component {
               <div />
             </Draggable>}
 
-          <div
-            className='nav-wrapper' style={{
-              width: this.state.navWidth + 'px'
-            }}
-          >
-            <div className='nav-content'>
-              <NavLeft treeData={treeData} />
-            </div>
-          </div>
+          {!fullScreen &&
+            <div
+              className='nav-wrapper' style={{
+                width: this.state.navWidth + 'px'
+              }}
+            >
+              <div className='nav-content'>
+                <NavLeft treeData={treeData} checked={this.getLayoutAttrs()} onCommand={onLeftNavMenuCommand} />
+              </div>
+            </div>}
 
           <div
-            className='main' style={{
-              left: (this.state.navWidth + 10) + 'px'
-            }}
+            className='main' style={mainStyle}
           >
             <div
               className='workspace' style={{
-                right: this.state.showPanel ? (this.state.panelWidth + 'px') : 0
+                width: workspaceWidth + 'px'
               }}
-            />
-            {this.state.showPanel &&
+            >
+              <Toolbar shows={toolbarShow} onShowChange={onToolbarShowChange} />
+              <WorkSpace zoom={1} rootElements={[]} width={workspaceWidth} height={fullScreen ? (windowHeight - 40) : (windowHeight - 60)} />
+            </div>
+            {showPanel && !fullScreen &&
               <div
                 className='panel' style={{
-                  left: this.state.showPanel ? (workspaceWidth + 'px') : 0
+                  left: showPanel ? (workspaceWidth + 'px') : 0
                 }}
               >
                 <HighlightOffIcon onClick={closePanel} size='small' color='primary' style={{ cursor: 'pointer', position: 'absolute', right: '10px', top: '10px' }} />

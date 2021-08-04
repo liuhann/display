@@ -81,14 +81,14 @@ export default class Ruler extends React.Component {
     context.save()
     // context.scale(2, 2)
     context.strokeStyle = lineColor
-    context.lineWidth = 1
+    context.lineWidth = 0.5
     context.font = '10px sans-serif'
     context.fillStyle = textColor
 
     if (isDirectionStart) {
       context.textBaseline = 'top'
     }
-    context.translate(0.5, 0)
+    // context.translate(0.5, 0)
     context.beginPath()
 
     const size = isHorizontal ? width : height
@@ -97,7 +97,7 @@ export default class Ruler extends React.Component {
     const maxRange = Math.ceil((scrollPos * zoom + size) / zoomUnit)
     const length = maxRange - minRange
 
-    for (let i = 0; i < length; ++i) {
+    for (let i = 0; i <= length; ++i) {
       const startPos = ((i + minRange) * unit - scrollPos) * zoom
 
       if (startPos >= -zoomUnit && startPos < size) {

@@ -67,6 +67,8 @@ const StyledMenuItem = withStyles((theme) => ({
 
 const TitleMenu = ({
   anchorEl,
+  exeCommand,
+  checked = [],
   handleClose
 }) => {
   const classes = useStyles()
@@ -77,7 +79,7 @@ const TitleMenu = ({
       open={Boolean(anchorEl)}
       onClose={handleClose}
     >
-      <StyledMenuItem>
+      <StyledMenuItem onClick={() => exeCommand('save')}>
         <SaveIcon
           style={{
             marginRight: '5px'
@@ -94,7 +96,7 @@ const TitleMenu = ({
           {/* <CheckIcon fontSize='small' /> */}
         </ListItemIcon>
       </StyledMenuItem>
-      <StyledMenuItem divider>
+      <StyledMenuItem divider onClick={() => exeCommand('save-as')}>
         <ListItemText
           className={classes.smallFont}
           primary='另存为...'
@@ -106,7 +108,7 @@ const TitleMenu = ({
           {/* <CheckIcon fontSize='small' /> */}
         </ListItemIcon>
       </StyledMenuItem>
-      <StyledMenuItem>
+      <StyledMenuItem onClick={() => exeCommand('toggle-panel')}>
         <MenuOpenIcon
           style={{
             marginRight: '5px'
@@ -118,7 +120,7 @@ const TitleMenu = ({
             flexDirection: 'row-reverse'
           }}
         >
-          <CheckIcon fontSize='small' />
+          {checked.includes('prop-panel') && <CheckIcon fontSize='small' />}
         </ListItemIcon>
       </StyledMenuItem>
     </StyledMenu>
@@ -126,15 +128,8 @@ const TitleMenu = ({
 }
 
 export default ({
-  value = 0,
-  tabs = [{
-    label: 'Tab1',
-    id: 'tab1'
-  }, {
-    label: 'Tab2',
-    id: 'tab2'
-  }],
-  change
+  checked = [], // 已经选中的菜单项
+  onCommand = () => {} // 点击菜单产出的命令
 }) => {
   const classes = useStyles()
   const [anchorEl, setAnchorEl] = React.useState(null)
@@ -158,7 +153,7 @@ export default ({
       <IconButton aria-label='delete' size='small' variant='outlined' className={classes.headerIcon} onClick={handleClick}>
         <MoreHorizIcon fontSize='inherit' className={classes.margin} />
       </IconButton>
-      <TitleMenu anchorEl={anchorEl} handleClose={handleClose} />
+      <TitleMenu anchorEl={anchorEl} handleClose={handleClose} checked={checked} exeCommand={onCommand} />
     </div>
   )
 }

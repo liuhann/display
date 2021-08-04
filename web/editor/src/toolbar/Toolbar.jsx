@@ -10,6 +10,8 @@ import FormatAlignLeftIcon from '@material-ui/icons/FormatAlignLeft'
 import FormatAlignCenterIcon from '@material-ui/icons/FormatAlignCenter'
 import FormatAlignRightIcon from '@material-ui/icons/FormatAlignRight'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
+import OpenInNewOutlinedIcon from '@material-ui/icons/OpenInNewOutlined'
+import FullscreenExitSharpIcon from '@material-ui/icons/FullscreenExitSharp';
 import FormatBoldIcon from '@material-ui/icons/FormatBold'
 import FormatItalicIcon from '@material-ui/icons/FormatItalic'
 import FormatUnderlinedIcon from '@material-ui/icons/FormatUnderlined'
@@ -28,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
     borderTop: 'none',
     borderLeft: 'none',
     borderRight: 'none',
+    height: '40px',
     // borderRadius: theme.shape.borderRadius,
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.primary
@@ -39,44 +42,45 @@ const useStyles = makeStyles((theme) => ({
     // }
   },
   iconbutton: {
-    padding: '6px'
+    padding: '7px',
+    '& .MuiSvgIcon-fontSizeSmall': {
+      fontSize: '20px'
+    }
   }
 }))
 
 export default ({
   shows = {
-    fullscreen: false,
+    fullScreen: false,
     locked: false
   },
-  emit = () => {}
+  onShowChange = () => {}
 }) => {
   const classes = useStyles()
 
   const changeShow = (key, value) => {
-    emit('command', {
-      show: {
-        [key]: value
-      }
+    onShowChange({
+      [key]: value
     })
   }
 
   const RightIcons = () => {
     return (
       <Grid item>
-        {!shows.fullscreen &&
-          <IconButton aria-label='全屏' color='action' className={classes.iconbutton} onClick={() => changeShow('fullscreen', true)}>
+        {!shows.fullScreen &&
+          <IconButton aria-label='全屏' color='action' className={classes.iconbutton} onClick={() => changeShow('fullScreen', true)}>
             <FullscreenIcon fontSize='small' />
           </IconButton>}
-        {shows.fullscreen &&
-          <IconButton aria-label='退出全屏' color='action' className={classes.iconbutton} onClick={() => changeShow('fullscreen', false)}>
+        {shows.fullScreen &&
+          <IconButton aria-label='退出全屏' color='action' className={classes.iconbutton} onClick={() => changeShow('fullScreen', false)}>
             <FullscreenExitIcon fontSize='small' />
           </IconButton>}
         <IconButton
-          aria-label='打开预览' color='action' className={classes.iconbutton} onClick={() => emit('command', {
+          aria-label='打开预览' color='action' className={classes.iconbutton} onClick={() => changeShow('command', {
             openLink: true
           })}
         >
-          <OpenInNewIcon fontSize='small' />
+          <OpenInNewOutlinedIcon fontSize='small' />
         </IconButton>
       </Grid>
     )
@@ -87,19 +91,19 @@ export default ({
       <Grid item xs>
         {!shows.locked &&
           <Tooltip title='锁定' arrow>
-            <IconButton aria-label='锁定' color='primary'>
-              <LockOpenIcon />
+            <IconButton aria-label='锁定' className={classes.iconbutton}>
+              <LockOpenIcon fontSize='small' />
             </IconButton>
           </Tooltip>}
         {shows.locked &&
           <Tooltip title='解除锁定' arrow>
-            <IconButton aria-label='解除锁定' color='primary'>
-              <LockIcon size='small' />
+            <IconButton aria-label='解除锁定' className={classes.iconbutton}>
+              <LockIcon size='small' fontSize='small' />
             </IconButton>
           </Tooltip>}
         <Tooltip title='删除' arrow>
-          <IconButton aria-label='删除' color='primary'>
-            <DeleteOutlineIcon />
+          <IconButton aria-label='删除' className={classes.iconbutton}>
+            <DeleteOutlineIcon fontSize='small' />
           </IconButton>
         </Tooltip>
       </Grid>

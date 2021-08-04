@@ -4,6 +4,7 @@ import Selecto from 'selecto'
 import Ruler from '../ruler/ruler.jsx'
 import { DATA_DISPLAY_ELEMENT_ID } from '../const'
 import { getParentDisplayElement } from '../utils/utils'
+import _ from 'lodash'
 
 const setElementMovable = (root, el) => {
   const otherWrappers = [...document.querySelectorAll('.element-wrapper')].filter(each => each !== el)
@@ -239,6 +240,7 @@ export default ({
   viewPortWidth = 800,
   viewPortHeight = 600,
   zoom,
+  elementChange,
   change // 输出文件定义
 }) => {
   const ref = React.createRef()
@@ -247,6 +249,51 @@ export default ({
 
   const [sceneX, setSceneX] = useState(0)
   const [sceneY, setSceneY] = useState(0)
+
+  const onDragEnter = event => {
+    console.log('drag enter')
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'move'
+  }
+
+  const insertElement = ({
+    x,
+    y,
+    def
+  }) => {
+    const root = sceneRef.current
+    const div = document.createElement('div')
+
+    const uniqueId = _.uniqueId('element_')
+    const fcView = {
+      id: uniqueId,
+      x: x,
+      y: y,
+      width: 200,
+      height: 200
+    }
+    div.className = 'element-wrapper'
+
+    div.setAttribute(DATA_DISPLAY_ELEMENT_ID, uniqueId)
+    div.setAttribute('id', uniqueId)
+    div.style.position = 'absolute'
+    div.style.left = fcView.x + 'px'
+    div.style.top = fcView.y + 'px'
+    div.style.width = fcView.width + 'px'
+    div.style.height = fcView.height + 'px'
+    div.style.border = '1px solid #ccc'
+    root.appendChild(div)
+  }
+  const onDrop = event => {
+    console.log('drop ', event)
+    const containerRect = event.currentTarget.getBoundingClientRect()
+
+    insertElement({
+      x: event.clientX - containerRect.x,
+      y: event.clientY - containerRect.y,
+      def: event
+    })
+  }
 
   useEffect(() => {
     const root = sceneRef.current
@@ -297,7 +344,8 @@ export default ({
   const workspaceStyle = {
     position: 'relative',
     background: '#eee',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    height: height + 'px'
   }
   const style = {
     position: 'relative',
@@ -313,6 +361,8 @@ export default ({
     <div id='editor-workspace' ref={workspaceRef} style={workspaceStyle}>
       <div className='editing-area' ref={ref} style={style}>
         <div
+          onDragOver={onDragEnter}
+          onDrop={onDrop}
           className='screen' style={{
             left: (sceneX + 24) + 'px',
             top: (sceneY + 24) + 'px',
@@ -327,7 +377,7 @@ export default ({
         type='horizontal'
         zoom={zoom}
         unit={50}
-        width={width - 30}
+        width={width - 24}
         height={24}
         direction='start'
         scrollPos={-sceneX}
@@ -335,9 +385,9 @@ export default ({
           position: 'absolute',
           left: '24px',
           top: 0,
-          zIndex: 9999,
-          width: (width - 30) + 'px',
-          height: '24px'
+          zIndex: 9999
+          // width: (width - 24) + 'px',
+          // height: '24px'
         }}
         backgroundColor='#333333'
         textColor='#ffffff'
@@ -359,16 +409,15 @@ export default ({
         zoom={zoom}
         unit={50}
         width={24}
-        height={height - 24}
-        direction='start'
+        height={height}
         scrollPos={-sceneY}
+        direction='start'
         style={{
           position: 'absolute',
           left: 0,
           zIndex: 9999,
-          top: '24px',
-          width: '24px',
-          height: (height - 24) + 'px'
+          top: '24px'
+          // width: '24px',
         }}
         backgroundColor='#333333'
         textColor='#ffffff'

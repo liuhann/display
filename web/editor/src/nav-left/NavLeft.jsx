@@ -4,6 +4,8 @@ import FcSearch from './FcSearch.jsx'
 import ComponentTree from './ComponentTree.jsx'
 
 export default ({
+  checked,
+  onCommand,
   treeData
 }) => {
   const [searchValue, setSearchValue] = useState('')
@@ -14,7 +16,7 @@ export default ({
 
   return (
     <div className='nav-left'>
-      <SidebarHeader />
+      <SidebarHeader checked={checked} onCommand={onCommand} />
       <FcSearch onInput={onSearchValueChange} />
       <ComponentTree
         treeData={treeData} filter={{

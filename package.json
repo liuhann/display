@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {},
   "workspaces": [
+    "utils/*",
     "web/*",
     "server/*",
     "components/*"
