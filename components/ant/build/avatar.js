@@ -91,19 +91,18 @@ var external_antd_css_ = __webpack_require__(6216);
 
 
 /* harmony default export */ const Avatar = (({
-  size,
   shape = 'circle',
   icon,
   src,
   alt,
   badgeDot,
   badgeCount,
-  width,
+  width = 48,
   height
 }) => {
   const InnerAvatar = () => {
     return /*#__PURE__*/React.createElement(external_antd_.Avatar, {
-      size: size || width,
+      size: width,
       shape: shape,
       src: src,
       alt: alt
@@ -134,28 +133,25 @@ var external_antd_css_ = __webpack_require__(6216);
   name: 'Avatar',
   component: Avatar,
   // 可配置属性列表，具体规则看样例
-  argTypes: {
-    size: {
-      control: {
-        type: 'number'
-      }
-    },
-    shape: {
-      options: ['square', 'circle'],
-      control: {
-        type: 'radio'
-      }
-    },
-    alt: {
-      control: {
-        type: 'text'
-      }
-    }
-  },
-  args: {
-    size: 48
-  },
-  externals: []
+  props: [{
+    name: 'shape',
+    type: 'enum',
+    options: ['square', 'circle']
+  }, {
+    name: 'alt',
+    type: 'string'
+  }, {
+    name: 'src',
+    type: 'string',
+    control: 'file'
+  }, {
+    name: 'badgeDot',
+    type: 'boolean',
+    value: false
+  }, {
+    name: 'badgeCount',
+    type: 'number'
+  }]
 });
 })();
 

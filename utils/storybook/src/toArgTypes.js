@@ -2,13 +2,6 @@
   * 元数据模型样例列表转换到Story Options
   * @param {PelType} list 元数据模型样例列表
   */
-function listToStoryBookOptions (list) {
-  return list.reduce((acc, item) => {
-    acc[item.key] = item.value
-    return acc
-  }, {})
-}
-
 /**
   * 转换图元基本属性列表到StoryBook的control需要的格式
   * @param {} configProps
@@ -31,13 +24,6 @@ export const toArgTypes = (configProps, configEvents) => {
             }
           })
           break
-        case 'color':
-          Object.assign(result[prop.name], {
-            control: {
-              type: 'color'
-            }
-          })
-          break
         case 'number':
           Object.assign(result[prop.name], {
             control: {
@@ -45,21 +31,27 @@ export const toArgTypes = (configProps, configEvents) => {
             }
           })
           break
+        case 'color':
+          Object.assign(result[prop.name], {
+            control: {
+              type: 'color'
+            }
+          })
+          break
         case 'string':
-
           switch (prop.control) {
-            case 'radio':
-              Object.assign(result[prop.name], {
-                options: Object.values(prop.options.options),
-                control: {
-                  type: 'radio'
-                }
-              })
-              break
             case 'uploader':
+            case 'file':
               Object.assign(result[prop.name], {
                 control: {
                   type: 'file'
+                }
+              })
+              break
+            case 'color':
+              Object.assign(result[prop.name], {
+                control: {
+                  type: 'color'
                 }
               })
               break
@@ -73,13 +65,20 @@ export const toArgTypes = (configProps, configEvents) => {
           }
           break
         case 'enum':
-          Object.assign(result[prop.name], {
-            control: {
-              type: 'select',
-              options: prop.options
-            }
-          })
-          break
+          if (prop.control) {
+            Object.assign(result[prop.name], {
+              control: prop.control
+            })
+            break
+          } else {
+            Object.assign(result[prop.name], {
+              control: {
+                type: 'select',
+                options: prop.options
+              }
+            })
+            break
+          }
         case 'object':
           Object.assign(result[prop.name], {
             control: {
@@ -88,28 +87,13 @@ export const toArgTypes = (configProps, configEvents) => {
           })
           break
         case 'array':
-          if (prop.items && prop.items.type) {
-            if (PelModelMaping[prop.items.type]) {
-              Object.assign(result[prop.name], {
-                control: {
-                  type: 'multi-select',
-                  options: listToStoryBookOptions(PelModelMaping[prop.type])
-                }
-              })
+          Object.assign(result[prop.name], {
+            control: {
+              type: 'object'
             }
-          } else {
-            console.warn('数组类型的组件请定义 items.type')
-          }
+          })
           break
         default:
-          if (PelModelMaping[prop.type]) {
-            Object.assign(result[prop.name], {
-              control: {
-                type: 'select',
-                options: PelModelMaping[prop.type].map(sample => sample.key)
-              }
-            })
-          }
           break
       }
     }

@@ -17,10 +17,19 @@
       "code": "build/pagination.js",
       "width": 640,
       "height": 32
+    },
+    {
+      "name": "Avatar",
+      "label": "头像",
+      "preview": "previews/Avatar.svg",
+      "code": "build/avatar.js",
+      "width": 60,
+      "height": 60
     }
   ],
   "license": "ISC",
   "dependencies": {
+    "display-storybook-preset": "^1.0.1",
     "antd": "^4.16.10"
   }
 }

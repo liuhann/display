@@ -2,19 +2,18 @@ import { Avatar, Badge } from 'antd'
 import 'antd/dist/antd.css'
 
 export default ({
-  size,
   shape = 'circle',
   icon,
   src,
   alt,
   badgeDot,
   badgeCount,
-  width,
+  width = 48,
   height
 }) => {
   const InnerAvatar = () => {
     return (
-      <Avatar size={size || width} shape={shape} src={src} alt={alt}>
+      <Avatar size={width} shape={shape} src={src} alt={alt}>
         {alt}
       </Avatar>
     )

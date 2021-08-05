@@ -1,21 +1,25 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react'
-import { toArgTypes } from './fcp_argtype'
+import { toArgTypes } from './toArgTypes.js'
 
 /**
  * 根据组件定义默认输出一个可配置化的Story
  * @param def
  * @returns StoryBook CSF
  */
-export default def => {
+export const getConfiguration = def => {
   if (!def.component) {
     return args => <div>请指定组件的component实现</div>
   }
   // 按StoryBook给的标准回调
   const configuration = args => {
     def.props.forEach(prop => {
+      // 设置默认值
       if (prop.value && !args[prop.name]) {
         args[prop.name] = prop.value
+      }
+      if (prop.type === 'string' && typeof args[prop.name] === 'object') {
+        args[prop.name] = args[prop.name][0]
       }
     })
 
