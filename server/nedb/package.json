@@ -1,0 +1,26 @@
+{
+  "name": "wind-dao-nedb",
+  "version": "1.1.1",
+  "description": "NeDB文档存储库",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node ./test/start.js",
+    "debug:test": "set DEBUG=wind:* && jest --verbose --no-cache",
+    "test": "jest --verbose --no-cache",
+    "coverage": "jest --coverage",
+    "build": "babel src -d build"
+  },
+  "author": "liuhann@gmail.com",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-jest": "^26.6.3",
+    "jest": "^26.6.3",
+    "jest-sonar": "^0.2.12"
+  },
+  "dependencies": {
+    "debug": "^4.2.0",
+    "glob": "^7.1.6",
+    "mk-dir": "^1.0.1",
+    "nedb": "^1.8.0"
+  }
+}

@@ -1,0 +1,432 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "组态应用服务",
+    "version": "1.0.0",
+    "title": "Apollo App Service"
+  },
+  "host": "10.10.0.21:4899",
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "应用管理服务",
+      "description": "应用管理服务"
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/app/login": {
+      "post": {
+        "tags": [
+          "应用管理服务"
+        ],
+        "summary": "登录到应用管理",
+        "description": "",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "user",
+            "in": "query",
+            "description": "用户名称",
+            "required": true,
+            "type": "string",
+            "default": "liuhan@goldwind.com.cn"
+          },
+          {
+            "name": "pwd",
+            "in": "query",
+            "description": "用户密码 先转16位再Base64",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "创建成功对应用对象",
+            "schema": {
+              "$ref": "#/definitions/Application"
+            }
+          }
+        }
+      }
+    },
+    "/app/create": {
+      "post": {
+        "tags": [
+          "应用管理服务"
+        ],
+        "summary": "新增应用",
+        "description": "",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "新增应用对象",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Application"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "创建成功对应用对象",
+            "schema": {
+              "$ref": "#/definitions/Application"
+            }
+          }
+        }
+      }
+    },
+    "/app/list": {
+      "get": {
+        "tags": [
+          "应用管理服务"
+        ],
+        "summary": "获取应用列表",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "应用列表",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Application"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/app/update": {
+      "post": {
+        "tags": [
+          "应用管理服务"
+        ],
+        "summary": "更新应用",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "更新的应用信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Application"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新后的应用信息",
+            "schema": {
+              "$ref": "#/definitions/Application"
+            }
+          }
+        }
+      }
+    },
+    "/app/publish": {
+      "post": {
+        "tags": [
+          "应用管理服务"
+        ],
+        "summary": "发布应用",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "更新的应用信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Application"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新后的应用信息",
+            "schema": {
+              "$ref": "#/definitions/Application"
+            }
+          }
+        }
+      }
+    },
+    "/app/rollback": {
+      "post": {
+        "tags": [
+          "应用管理服务"
+        ],
+        "summary": "应用使用到版本",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "更新的应用信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Application"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "回退版本后的应用信息",
+            "schema": {
+              "$ref": "#/definitions/Application"
+            }
+          }
+        }
+      }
+    },
+    "/app/version/list": {
+      "get": {
+        "tags": [
+          "应用管理服务"
+        ],
+        "summary": "获取版本列表",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "应用名称",
+            "required": true,
+            "type": "string",
+            "default": "scada-app"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "回退版本后的应用信息",
+            "schema": {
+              "$ref": "#/definitions/Application"
+            }
+          }
+        }
+      }
+    },
+    "/app/scada-app/menu/add": {
+      "post": {
+        "tags": [
+          "应用管理服务"
+        ],
+        "summary": "增加主菜单项",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "更新的应用信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MenuItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "新增菜单",
+            "schema": {
+              "$ref": "#/definitions/MenuItem"
+            }
+          }
+        }
+      }
+    },
+    "/app/scada-app/menu/update": {
+      "post": {
+        "tags": [
+          "应用管理服务"
+        ],
+        "summary": "更新菜单内容/移动菜单",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "更新的应用信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MenuItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "新增菜单",
+            "schema": {
+              "$ref": "#/definitions/MenuItem"
+            }
+          }
+        }
+      }
+    },
+    "/app/scada-app/menu/tree": {
+      "get": {
+        "tags": [
+          "应用管理服务"
+        ],
+        "summary": "获取菜单树形结构",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "新增菜单",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MenuItem"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/app/scada-app/menu/{menuId}": {
+      "delete": {
+        "tags": [
+          "应用管理服务"
+        ],
+        "summary": "删除节点",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "menuId",
+            "in": "path",
+            "description": "待删除节点id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "新增菜单",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MenuItem"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Application": {
+      "type": "object",
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "scada-app"
+        },
+        "version": {
+          "type": "string",
+          "example": "1.0.0"
+        },
+        "icon": {
+          "type": "string",
+          "example": "./some-icon"
+        },
+        "desc": {
+          "type": "string",
+          "example": "SCADA 应用"
+        },
+        "frame": {
+          "type": "string"
+        },
+        "skin": {
+          "type": "string"
+        },
+        "img": {
+          "type": "string",
+          "example": "preview.png"
+        },
+        "code": {
+          "type": "string",
+          "example": "1123"
+        }
+      }
+    },
+    "MenuItem": {
+      "required": [
+        "name",
+        "pid",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "example": "实时监控"
+        },
+        "pid": {
+          "type": "string",
+          "example": "父节点Id"
+        },
+        "page": {
+          "type": "string",
+          "example": "PageId"
+        },
+        "params": {
+          "type": "object"
+        },
+        "state": {
+          "type": "string",
+          "example": "1.0.0"
+        },
+        "type": {
+          "type": "string",
+          "example": "noraml"
+        },
+        "icon": {
+          "type": "string",
+          "example": "./some-icon"
+        },
+        "img": {
+          "type": "string",
+          "example": "preview.png"
+        },
+        "sort": {
+          "type": "integer",
+          "example": 1
+        }
+      }
+    }
+  }
+}

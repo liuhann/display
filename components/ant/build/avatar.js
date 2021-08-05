@@ -8,7 +8,7 @@ module.exports = (function() { return this["antd"]; }());
 
 /***/ }),
 
-/***/ 6216:
+/***/ 216:
 /***/ ((module) => {
 
 module.exports = (function() { return this["antd_css"]; }());
@@ -86,7 +86,7 @@ __webpack_require__.d(__webpack_exports__, {
 // EXTERNAL MODULE: external "antd"
 var external_antd_ = __webpack_require__(953);
 // EXTERNAL MODULE: external "antd_css"
-var external_antd_css_ = __webpack_require__(6216);
+var external_antd_css_ = __webpack_require__(216);
 ;// CONCATENATED MODULE: ./src/avatar/Avatar.jsx
 
 

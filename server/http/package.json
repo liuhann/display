@@ -1,5 +1,5 @@
 {
-  "name": "@gw/wind-core-http",
+  "name": "wind-core-http",
   "version": "2.0.0",
   "description": "Http路由及处理模块",
   "main": "src/index.js",
@@ -8,11 +8,6 @@
   },
   "author": "liuhann@gmail.com",
   "license": "ISC",
-  "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.6",
-    "@gw/eslint-config-common": "^1.0.0"
-  },
   "dependencies": {
     "@koa/router": "^9.3.1",
     "assert": "^2.0.0",
@@ -28,8 +23,5 @@
     "koa-static": "^5.0.0",
     "mz": "^2.7.0",
     "resolve-path": "^1.4.0"
-  },
-  "publishConfig": {
-    "registry": "http://10.10.247.1:4873"
   }
 }
