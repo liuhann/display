@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "wind-core-dao": "^1.1.0",
-    "wind-core-http": "^1.1.0",
+    "wind-core-http": "^2.0.0",
     "wind-dao-nedb": "^1.1.0",
     "bson-objectid": "^2.0.1",
     "debug": "^4.3.2"

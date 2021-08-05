@@ -8,9 +8,9 @@
   "author": "liuhann@gmail.com",
   "license": "ISC",
   "dependencies": {
-    "wind-boot": "^1.1.1",
+    "wind-boot": "^2.0.0",
     "wind-core-dao": "^1.1.0",
-    "wind-core-http": "^1.1.4",
+    "wind-core-http": "^2.0.0",
     "wind-dao-nedb": "^1.1.1",
     "wind-app-service": "^1.0.15"
   }
