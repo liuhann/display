@@ -4,7 +4,7 @@ const path = require('path'),
     { CleanWebpackPlugin } = require('clean-webpack-plugin'),
     { merge } = require('webpack-merge'),
     ProgressPlugin = require('webpack/lib/ProgressPlugin'),
-    webpackExternals = require('display-3rd-dependecies'),
+    webpackExternals = require('display-dependecies'),
     webpackCommonBase = require('./webpack.common.js'),
     chalk = require('chalk');
 
@@ -33,12 +33,12 @@ const log = console.log,
 
         const packageJson = require(path.resolve(packagePath, './package.json'));
 
-        const targetFiles = await promiseGlob('./src/**/*.fcp.js'),
+        const targetFiles = await promiseGlob('./src/**/*.d.js'),
 
             entry = {};
 
         if (targetFiles.length === 0) {
-            log(chalk.green('未找到图元 ./src/**/*.fcp.js'));
+            log(chalk.green('未找到图元 ./src/**/*.d.js'));
         }
         log(chalk.green('编译打包以下图元文件'));
 
@@ -46,7 +46,7 @@ const log = console.log,
             const file = targetFiles[i];
 
             log(chalk.green(file));
-            entry[path.basename(path.resolve(file, '../')) + '-' + path.basename(file, '.js')] = file;
+            entry[path.basename(path.resolve(file, '../')) + '.js'] = file;
         }
         // 读取配置好的external目录
         const externals = {};
@@ -76,7 +76,7 @@ const log = console.log,
                 entry,
                 output: {
                     filename: chunkData => {
-                        return chunkData.chunk.name.substring(0, chunkData.chunk.name.indexOf('.')) + '.fcp.js';
+                        return chunkData.chunk.name.substring(0, chunkData.chunk.name.indexOf('.')) + '.js';
                     },
                     // filename: '[name].js',
                     // 图元的全局唯一ID (pelUId) 也是图元的下载地址

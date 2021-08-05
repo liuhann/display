@@ -4,14 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "build-fc",
+    "build-src": "build-fc --no-minimize",
+    "storybook": "start-storybook -p 6006"
   },
   "author": "liuhann@gmail.com",
-  "components": [{
+  "components": [
+    {
       "name": "Pagination",
       "label": "分页",
       "preview": "previews/Pagination.svg",
-      "code": "build/pagination.js"
-  }],
-  "license": "ISC"
+      "code": "build/pagination.js",
+      "width": 640,
+      "height": 32
+    }
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "antd": "^4.16.10"
+  }
 }

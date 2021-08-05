@@ -9,17 +9,16 @@
     "build-fc": "bin/build.js"
   },
   "scripts": {},
-  "devDependencies": {},
   "dependencies": {
-    "display-3rd-dependecies": "^1.0.0",
     "chalk": "^4.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^4.3.0",
+    "display-3rd-dependecies": "^1.0.0",
     "glob": "^7.1.6",
     "sass": "^1.32.8",
-		"sass-loader": "^10.1.1",
+    "webpack": "^5.48.0",
+    "sass-loader": "^10.1.1",
     "style-loader": "^1.2.1",
-    "webpack": "^4.44.1",
     "webpack-merge": "^5.1.4"
   }
 }
