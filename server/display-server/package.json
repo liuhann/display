@@ -12,6 +12,7 @@
     "wind-core-dao": "^1.1.0",
     "wind-core-http": "^2.0.0",
     "wind-dao-nedb": "^1.1.1",
+    "wind-assets-service": "^2.0.5",
     "wind-app-service": "^1.0.15"
   }
 }

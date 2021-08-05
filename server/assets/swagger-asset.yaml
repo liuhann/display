@@ -1,0 +1,94 @@
+swagger: "2.0"
+info:
+  description: "资源管理相关服务"
+  version: "1.0.0"
+  title: "Apollo Asset-Manage Service"
+host: "10.10.0.21:4899"
+basePath: "/api"
+tags:
+- name: "asset"
+  description: "资源管理服务"
+schemes:
+- "https"
+- "http"
+paths:
+  /assets/install:
+    get:
+      tags:
+      - "asset"
+      summary: "安装资源包"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "query"
+        description: "资源包名称"
+        required: true
+        type: "string"
+        default: "@gw/wind-pels-standard"
+      responses:
+        "200":
+          description: "组织机构下拥有的资源包"
+          schema: 
+            $ref: '#/definitions/ResourceList'
+  /assets/pkg/info:
+    get:
+      tags:
+      - "asset"
+      summary: "获取资源包信息"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "query"
+        description: "资源包名称"
+        required: true
+        type: "string"
+        default: "@gw/wind-pels-standard"
+      - name: "version"
+        in: "query"
+        description: "资源包版本"
+        type: "string"
+        default: "1.0.4"
+      responses:
+        "200":
+          description: "资源包信息"
+          schema: 
+            $ref: '#/definitions/ResourceList'
+  /assets/${name}:
+    delete:
+      tags:
+        - "asset"
+      summary: "删除资源包"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "资源包名称"
+        default: "@gw/wind-pels-standard"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "所有资源包版本信息"
+          schema: 
+            $ref: '#/definitions/ResourceList'
+definitions:
+  ResourceList:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        description: "状态码"
+        format: "int64"
+      msg:
+        type: "string"
+        description: "类型"
+      data:
+        type: "array"
+        items: 
+          type: "string"
+          description: "资源名称"
