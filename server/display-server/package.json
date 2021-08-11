@@ -1,10 +1,9 @@
 {
   "name": "display-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "liuhann@gmail.com",
   "license": "ISC",
   "dependencies": {

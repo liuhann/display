@@ -167,7 +167,7 @@ export default ({
         defaultExpandIcon={<ArrowRightIcon />}
         defaultEndIcon={<div style={{ width: 24 }} />}
       >
-        {filteredTreeData.map((data, index) => <RenderPackage data={data} key={data.packageName} />)}
+        {filteredTreeData && filteredTreeData.map((data, index) => <RenderPackage data={data} key={data.packageName} />)}
       </TreeView>
     </div>
   )

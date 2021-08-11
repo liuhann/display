@@ -21,6 +21,7 @@
     "@material-ui/lab": "^4.0.0-alpha.60",
     "lodash": "^4.17.21",
     "react-draggable": "^4.4.3",
+    "display-web-data":"^1.0.0",
     "selecto": "^1.12.1"
   },
   "devDependencies": {

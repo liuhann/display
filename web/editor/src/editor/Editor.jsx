@@ -6,8 +6,10 @@ import WorkSpace from '../space/workspace.jsx'
 import Toolbar from '../toolbar/Toolbar.jsx'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 
+import { AssetDAO } from 'display-web-data'
+
 export default class Editor extends React.Component {
-  constructor (props) {
+  constructor () {
     super()
     this.state = {
       windowWidth: document.body.offsetWidth,
@@ -15,10 +17,23 @@ export default class Editor extends React.Component {
       navWidth: 260,
       panelWidth: 340,
       showPanel: true,
+      treeData: [],
       toolbarShow: {
         fullScreen: false
       }
     }
+  }
+
+  componentDidMount () {
+    this.doStartEditor()
+  }
+
+  async doStartEditor () {
+
+  }
+
+  async fetchAssetTree () {
+    this.
   }
 
   getLayoutAttrs () {

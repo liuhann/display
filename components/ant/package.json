@@ -1,6 +1,6 @@
 {
   "name": "display-antd",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,6 +8,8 @@
     "build-src": "build-fc --no-minimize",
     "storybook": "start-storybook -p 6006"
   },
+  "snapshot": "antd.svg",
+  "icon": "antd.svg",
   "author": "liuhann@gmail.com",
   "components": [
     {
