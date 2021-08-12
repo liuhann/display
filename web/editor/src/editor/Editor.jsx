@@ -5,8 +5,11 @@ import NavLeft from '../nav-left/NavLeft.jsx'
 import WorkSpace from '../space/workspace.jsx'
 import Toolbar from '../toolbar/Toolbar.jsx'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
+import { ThemeContext } from 'async-boot-react/src/module/boot-context.js'
 
 import { AssetDAO } from 'display-web-data'
+
+import toTreeData from '../model/toTreeData.js'
 
 export default class Editor extends React.Component {
   constructor () {
@@ -24,16 +27,23 @@ export default class Editor extends React.Component {
     }
   }
 
+  static contextType = ThemeContext
+
   componentDidMount () {
     this.doStartEditor()
   }
 
   async doStartEditor () {
-
+    this.fetchAssetTree()
   }
 
   async fetchAssetTree () {
-    this.
+    const { config  } = this.context
+    this.assetDao = new AssetDAO(config.serviceUrl)
+    const assets = await this.assetDao.getPublicAssets()
+    this.setState({
+      treeData: toTreeData(assets.data)
+    })
   }
 
   getLayoutAttrs () {
@@ -45,8 +55,7 @@ export default class Editor extends React.Component {
   }
 
   render () {
-    const { treeData } = this.props
-    const { windowWidth, windowHeight, navWidth, panelWidth, showPanel, toolbarShow } = this.state
+    const { windowWidth, windowHeight, navWidth, panelWidth, showPanel, toolbarShow, treeData } = this.state
 
     // 切换全屏的操作
     const { fullScreen } = toolbarShow

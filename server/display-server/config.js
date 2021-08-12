@@ -5,11 +5,12 @@ module.exports = {
   // HTTP服务端口，不配置则不启动http服务
   port: 80,
   // HTTP服务端口 httpsPort Key Cert 三个都配置才能启动https服务
-  httpsPort: 443,
+  // httpsPort: 443,
   // https key
   httpsKey: './key/server_private.key',
   // https cert
   httpsCert: './key/server.crt',
+  isRepo: true,
   appRoot: storeRoot,
   // npm 全局资源服务器地址，非研发环境无法访问。应用内的资源安装时使用
   npmServer: 'https://registry.npmjs.org',
@@ -35,5 +36,5 @@ module.exports = {
     credentials: true
   },
   // 静态托管地址， 默认使用应用的public目录、 110版本存储目录及应用部署根目录
-  public: [storeRoot + '/public', storeRoot + '/users'],
+  public: [storeRoot + '/public', storeRoot + '/users']
 }

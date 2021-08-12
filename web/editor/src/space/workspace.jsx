@@ -285,13 +285,14 @@ export default ({
     root.appendChild(div)
   }
   const onDrop = event => {
-    console.log('drop ', event)
+    const component = JSON.parse(event.dataTransfer.getData('text/plain'))
+    console.log('drop ', component)
     const containerRect = event.currentTarget.getBoundingClientRect()
 
     insertElement({
       x: event.clientX - containerRect.x,
       y: event.clientY - containerRect.y,
-      def: event
+      link: component
     })
   }
 

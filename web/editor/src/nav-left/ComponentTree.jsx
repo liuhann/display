@@ -35,20 +35,33 @@ const useTreeItemStyles = makeStyles((theme) => ({
     alignItems: 'center'
   },
   labelFolderRoot: {
-    padding: theme.spacing(0.5)
+    padding: theme.spacing(0.5),
+    alignItems: 'center',
+    display: 'flex'
   },
   labelIcon: {
     marginRight: theme.spacing(1)
   },
   labelText: {
     fontWeight: 'inherit',
-    flexGrow: 1
+    marginLeft: '10px',
+    fontSize: theme.typography.caption
+  },
+  folderAvatar: {
+    width: '16px',
+    height: '16px'
+  },
+  itemAvatar: {
+    margin: theme.spacing(1)
+  },
+  itemAvatarImg: {
+    objectFit: 'contain'
   }
 }))
 
 function StyledTreeItem (props) {
   const classes = useTreeItemStyles()
-  const { labelText, preview, isFolder, labelIcon: LabelIcon, labelInfo, color, bgColor, treeNodeHover, treeNodeOut, ...other } = props
+  const { labelText, preview, isFolder, labelIcon: LabelIcon, labelInfo, color, bgColor, treeNodeHover, treeNodeOut, data, ...other } = props
 
   const dragStartHandler = (event, preview) => {
     // Create an image and then use it for the drag image.
@@ -56,7 +69,10 @@ function StyledTreeItem (props) {
     // will not be created and the default drag image will be used.
     const img = new window.Image()
     img.src = preview
-    event.dataTransfer.setDragImage(img, 100, 100)
+    img.width = 100
+    img.height = 100
+    event.dataTransfer.setDragImage(img, 50, 50)
+    event.dataTransfer.setData('text/plain', JSON.stringify(data))
     treeNodeOut && treeNodeOut()
   }
   return (
@@ -68,8 +84,16 @@ function StyledTreeItem (props) {
       label={
         <div className={isFolder ? classes.labelFolderRoot : classes.labelRoot}>
           {preview &&
-            <Avatar alt='Remy Sharp' variant='rounded' src={preview} />}
-          <Typography variant='body2' className={classes.labelText}>
+            <Avatar
+              alt={labelText} variant='rounded' src={preview} classes={{
+                root: isFolder ? classes.folderAvatar : classes.itemAvatar,
+                img: isFolder ? '' : classes.itemAvatarImg
+              }}
+            />}
+          <Typography classes={{
+            root: isFolder ? classes.labelText : ''
+          }}
+          >
             {labelText}
           </Typography>
         </div>
@@ -142,6 +166,7 @@ export default ({
         treeNodeOut={onTreeNodeOut}
         preview={data.preview}
         nodeId={data.name}
+        data={data}
         labelText={data.label}
       />
     )
@@ -149,8 +174,8 @@ export default ({
 
   const RenderPackage = ({ data, handlePopoverOpen, handlePopoverClose }) => {
     return (
-      <StyledTreeItem nodeId={data.packageName} labelText={data.packageLabel} isFolder>
-        <div className='wrapperInner-x' style={{ padding: '10px 0', display: 'grid', 'grid-template-columns': 'repeat(3, 33.33%)' }}>
+      <StyledTreeItem nodeId={data.packageName} labelText={data.packageLabel} isFolder preview={data.preview}>
+        <div className='wrapperInner-x' style={{ padding: '10px 0', display: 'grid', gridTemplateColumns: 'repeat(3, 33.33%)' }}>
           {data.components.map((component, index) => <RenderComponent key={component.name} data={component} />)}
         </div>
       </StyledTreeItem>

@@ -1,4 +1,5 @@
 const AssetsService = require('./assets_service')
+const AssetRepoService = require('./assets_repo_service')
 const name = require('../package.json').name
 const version = require('../package.json').version
 const description = require('../package.json').description
@@ -17,6 +18,11 @@ module.exports = {
   async ready (app) {
     app.services.assetsService = new AssetsService(app)
     await app.services.assetsService.initRoute(app.router)
+
+    if (app.config.isRepo) {
+      app.services.assetRepoService = new AssetRepoService(app)
+      await app.services.assetRepoService.initRoute(app.router)
+    }
   },
 
   // 启动收尾工作，可以在此执行建库、建索引等一些全局的具体业务操作

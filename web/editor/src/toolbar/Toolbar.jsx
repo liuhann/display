@@ -68,15 +68,15 @@ export default ({
     return (
       <Grid item>
         {!shows.fullScreen &&
-          <IconButton aria-label='全屏' color='action' className={classes.iconbutton} onClick={() => changeShow('fullScreen', true)}>
+          <IconButton aria-label='全屏' className={classes.iconbutton} onClick={() => changeShow('fullScreen', true)}>
             <FullscreenIcon fontSize='small' />
           </IconButton>}
         {shows.fullScreen &&
-          <IconButton aria-label='退出全屏' color='action' className={classes.iconbutton} onClick={() => changeShow('fullScreen', false)}>
+          <IconButton aria-label='退出全屏' className={classes.iconbutton} onClick={() => changeShow('fullScreen', false)}>
             <FullscreenExitIcon fontSize='small' />
           </IconButton>}
         <IconButton
-          aria-label='打开预览' color='action' className={classes.iconbutton} onClick={() => changeShow('command', {
+          aria-label='打开预览' className={classes.iconbutton} onClick={() => changeShow('command', {
             openLink: true
           })}
         >

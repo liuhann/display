@@ -4,6 +4,8 @@ import { isArray, isFunction } from '../utils/lang'
 import ErrorBoundary from './ErrorBoundary.jsx'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
+import { ThemeContext } from './boot-context.js'
+
 export default {
   async load (ctx) {
     const options = {
@@ -25,15 +27,17 @@ export default {
   async started (ctx, next) {
     const Router = () => {
       return (
-        <BrowserRouter>
-          <ErrorBoundary>
-            <Suspense fallback={<div>Loading...</div>}>
-              <Switch>
-                {ctx._routes.map((route, index) => <Route key={index} path={route.path} component={lazy(route.component)} />)}
-              </Switch>
-            </Suspense>
-          </ErrorBoundary>
-        </BrowserRouter>
+        <ThemeContext.Provider value={ctx}>
+          <BrowserRouter>
+            <ErrorBoundary>
+              <Suspense fallback={<div>Loading...</div>}>
+                <Switch>
+                  {ctx._routes.map((route, index) => <Route key={index} path={route.path} component={lazy(route.component)} />)}
+                </Switch>
+              </Suspense>
+            </ErrorBoundary>
+          </BrowserRouter>
+        </ThemeContext.Provider>
       )
     }
 
