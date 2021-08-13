@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React from 'react'
 
 import { makeStyles } from '@material-ui/core/styles'
 import TreeView from '@material-ui/lab/TreeView'
@@ -7,8 +7,6 @@ import Typography from '@material-ui/core/Typography'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import ArrowRightIcon from '@material-ui/icons/ArrowRight'
 import Avatar from '@material-ui/core/Avatar'
-import Collapse from '@material-ui/core/Collapse'
-import Label from '@material-ui/icons/Label'
 
 const useTreeItemStyles = makeStyles((theme) => ({
   content: {
@@ -172,9 +170,9 @@ export default ({
     )
   }
 
-  const RenderPackage = ({ data, handlePopoverOpen, handlePopoverClose }) => {
+  const RenderPackage = ({ key, data, handlePopoverOpen, handlePopoverClose }) => {
     return (
-      <StyledTreeItem nodeId={data.packageName} labelText={data.packageLabel} isFolder preview={data.preview}>
+      <StyledTreeItem key={key} nodeId={data.packageName} labelText={data.packageLabel} isFolder preview={data.preview}>
         <div className='wrapperInner-x' style={{ padding: '10px 0', display: 'grid', gridTemplateColumns: 'repeat(3, 33.33%)' }}>
           {data.components.map((component, index) => <RenderComponent key={component.name} data={component} />)}
         </div>
@@ -185,15 +183,13 @@ export default ({
   const filteredTreeData = filterTreeData(treeData, filter)
 
   return (
-    <div>
-      <TreeView
-        className={classes.root}
-        defaultCollapseIcon={<ArrowDropDownIcon />}
-        defaultExpandIcon={<ArrowRightIcon />}
-        defaultEndIcon={<div style={{ width: 24 }} />}
-      >
-        {filteredTreeData && filteredTreeData.map((data, index) => <RenderPackage data={data} key={data.packageName} />)}
-      </TreeView>
-    </div>
+    <TreeView
+      className={classes.root}
+      defaultCollapseIcon={<ArrowDropDownIcon />}
+      defaultExpandIcon={<ArrowRightIcon />}
+      defaultEndIcon={<div style={{ width: 24 }} />}
+    >
+      {filteredTreeData && filteredTreeData.map((data, index) => <RenderPackage data={data} key={data.packageName} />)}
+    </TreeView>
   )
 }

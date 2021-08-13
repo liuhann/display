@@ -22,6 +22,7 @@ export default class Editor extends React.Component {
       showPanel: true,
       treeData: [],
       toolbarShow: {
+        scale: 1,
         fullScreen: false
       }
     }

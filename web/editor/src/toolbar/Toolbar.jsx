@@ -11,7 +11,7 @@ import FormatAlignCenterIcon from '@material-ui/icons/FormatAlignCenter'
 import FormatAlignRightIcon from '@material-ui/icons/FormatAlignRight'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
 import OpenInNewOutlinedIcon from '@material-ui/icons/OpenInNewOutlined'
-import FullscreenExitSharpIcon from '@material-ui/icons/FullscreenExitSharp';
+import FullscreenExitSharpIcon from '@material-ui/icons/FullscreenExitSharp'
 import FormatBoldIcon from '@material-ui/icons/FormatBold'
 import FormatItalicIcon from '@material-ui/icons/FormatItalic'
 import FormatUnderlinedIcon from '@material-ui/icons/FormatUnderlined'
@@ -19,9 +19,16 @@ import SettingsOverscanIcon from '@material-ui/icons/SettingsOverscan'
 import LockOpenIcon from '@material-ui/icons/LockOpen'
 import LockIcon from '@material-ui/icons/Lock'
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
+import AddBoxIcon from '@material-ui/icons/AddBox'
+import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox'
+
 import Grid from '@material-ui/core/Grid'
 import Divider from '@material-ui/core/Divider'
 import { green, grey } from '@material-ui/core/colors'
+
+import ScaleDropDown from './ScaleDropDown.jsx'
+
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
 export default ({
   shows = {
     fullScreen: false,
+    scale: 1,
     locked: false
   },
   onShowChange = () => {}
@@ -67,6 +75,7 @@ export default ({
   const RightIcons = () => {
     return (
       <Grid item>
+        <ScaleDropDown classes={classes} scale={shows.scale} changeShow={changeShow} />
         {!shows.fullScreen &&
           <IconButton aria-label='全屏' className={classes.iconbutton} onClick={() => changeShow('fullScreen', true)}>
             <FullscreenIcon fontSize='small' />
