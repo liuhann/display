@@ -63,9 +63,6 @@ export default class FCLoader {
    */
   getPelUrl (pel) {
     return `${pel.packageName}/${pel.path}`
-    // return new URL(pel.path, `http://any.com/${pel.packageName}@${pel.version}/`).pathname.substr(1);
-    // return new URL(pel.path, `http://any.com/${pel.packageName}/`).pathname.substr(1);
-    // return path.resolve(`${pel.packageName}-${pel.version}/package`, pel.path).substr(1);
   }
 
   /**

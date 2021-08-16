@@ -23,6 +23,7 @@
     "lodash": "^4.17.21",
     "react-draggable": "^4.4.3",
     "display-web-data":"^1.0.0",
+    "display-view":"^1.0.0",
     "selecto": "^1.12.1"
   },
   "devDependencies": {
