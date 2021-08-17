@@ -78,7 +78,7 @@ module.exports = class ApplicationService {
         recursive: true
       })
     }
-    this.appList = await this.updateAppList()
+    // this.appList = await this.updateAppList()
   }
 
   async create (appObject) {
