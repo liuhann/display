@@ -80,7 +80,7 @@ const log = console.log,
                     },
                     // filename: '[name].js',
                     // 图元的全局唯一ID (pelUId) 也是图元的下载地址
-                    library: `${packageJson.name}/${BUILD_PATH}/[name].js`,
+                    library: `${packageJson.name}/${BUILD_PATH}/[name]`,
                     // 代码输出格式，amd方式将依赖也输出到define上，未来在运行时需要针对amd加载做相关处理
                     libraryTarget: 'this',
                     // 如果代码中有import() 异步引入的部分，打包后会自动增加server地址前缀

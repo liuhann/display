@@ -170,9 +170,9 @@ export default ({
     )
   }
 
-  const RenderPackage = ({ key, data, handlePopoverOpen, handlePopoverClose }) => {
+  const RenderPackage = ({ data, handlePopoverOpen, handlePopoverClose }) => {
     return (
-      <StyledTreeItem key={key} nodeId={data.packageName} labelText={data.packageLabel} isFolder preview={data.preview}>
+      <StyledTreeItem nodeId={data.packageName} labelText={data.packageLabel} isFolder preview={data.preview}>
         <div className='wrapperInner-x' style={{ padding: '10px 0', display: 'grid', gridTemplateColumns: 'repeat(3, 33.33%)' }}>
           {data.components.map((component, index) => <RenderComponent key={component.name} data={component} />)}
         </div>

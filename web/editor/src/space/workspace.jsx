@@ -31,6 +31,7 @@ export default ({
   }
 
   const onDrop = event => {
+    event.preventDefault()
     const component = JSON.parse(event.dataTransfer.getData('text/plain'))
     console.log('drop ', component)
     const containerRect = event.currentTarget.getBoundingClientRect()
@@ -39,10 +40,9 @@ export default ({
       x: event.clientX - containerRect.x,
       y: event.clientY - containerRect.y,
       loader: theme.fcLoader,
-      link: component
+      component
     })
     const root = sceneRef.current
-
     root.appendChild(insertedElementDiv)
   }
 

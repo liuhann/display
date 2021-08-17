@@ -1,5 +1,8 @@
 import debug from 'debug'
 import './style.css'
+import template from './template.js'
+import _ from 'lodash'
+
 const log = debug('runtime:fc-view')
 const captureEvents = ['onclick', 'ondblclick', 'onmouseup', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseenter', 'onmouseover', 'oncontextmenu']
 
@@ -20,6 +23,7 @@ export default class FrontComponentView {
     preloadChild
   }) {
     this.el = el
+    this.uuid = _.uniqueId('fc_')
     this.component = component
     this.fcInstanceConfig = fcInstanceConfig
     this.loader = loader
@@ -46,6 +50,10 @@ export default class FrontComponentView {
     } else {
       this.visible = true
     }
+
+    if (!this.loaded) {
+      this.setLoading(true)
+    }
   }
 
   /**
@@ -59,7 +67,7 @@ export default class FrontComponentView {
 
     // 加载组件定义信息
     if (this.component.packageName != null || this.component.path != null) {
-      const componentDefinition = await this.loader.loadPel(this.component)
+      const componentDefinition = await this.loader.loadComponent(this.component.packageName, this.component.path, this.component.dependencies)
 
       if (!componentDefinition || !componentDefinition.factory) {
         log('加载图元失败: 未获取组件', this.fcInstanceConfig)
@@ -206,6 +214,7 @@ export default class FrontComponentView {
     }
     // 设置回写属性值的事件
     this.propertyWriteBackEvents = {}
+    this.instancePropConfig = this.fcInstanceConfig.staticProps || {}
     // 枚举、处理所有属性定义
     for (const prop of this.componentDefinition.props || []) {
       // 默认值次序： 控件实例化给的默认值 -> 组态化定义的默认值 -> 前端组件的默认值 (这个不给就用默认值了)
@@ -233,11 +242,10 @@ export default class FrontComponentView {
       }
       // 属性进行动态绑定的情况 （动态属性） 这里只进行一次计算， 动态属性更新时会调用update进行更新
       // eslint-disable-next-line max-len
-      if (this.fcInstanceConfig.reactiveProps[prop.name]) {
+      if (this.fcInstanceConfig.reactiveProps && this.fcInstanceConfig.reactiveProps[prop.name]) {
         const context = Object.assign({}, this.contextVariables, {
           $scope: this.scopeVariables
         })
-
         this.instancePropConfig[prop.name] = template(this.fcInstanceConfig.reactiveProps[prop.name], context)
       }
     }
@@ -270,6 +278,8 @@ export default class FrontComponentView {
     for (const slotProp in this.slotFcViews) {
       this.instancePropConfig[slotProp] = this.slotFcViews[slotProp]
     }
+
+    this.convertPropTypes(this.instancePropConfig, this.componentDefinition.props)
 
     // 设置默认的系统级别字段
     // TODO 这些字段未来声明了才注入
@@ -388,9 +398,9 @@ export default class FrontComponentView {
         let rect = this.el.getBoundingClientRect()
 
         if (this.el.style.display === 'none') {
-          this.el.style.display === ''
+          this.el.style.display = ''
           rect = this.el.getBoundingClientRect()
-          this.el.style.display === 'none'
+          this.el.style.display = 'none'
         }
 
         if (rect.width > 0 && rect.height > 0) {
@@ -401,13 +411,12 @@ export default class FrontComponentView {
       this.el.style.background = ''
 
       log('mount with', this.fcInstanceConfig.guid, this.instancePropConfig)
-      this.convertPropTypes(this.instancePropConfig, this.componentDefinition.props)
-      this.renderer = this.componentDefinition.factory.mount(this.el, this.instancePropConfig)
 
+      this.renderer = this.componentDefinition.factory.mount(this.el, this.instancePropConfig)
       // 检查数据获取是否满足， 如果未获取 显示一个加载中的遮罩层
       this.checkDBLoaded()
     } catch (e) {
-      if (localStorage.fcview === 'debug') {
+      if (window.localStorage.fcview === 'debug') {
         this.el.innerHTML = this.fcInstanceConfig.packageName + '@' + this.fcInstanceConfig.version + '/' + this.fcInstanceConfig.path + '<br>' + e
       }
       log(e)
@@ -442,44 +451,6 @@ export default class FrontComponentView {
       await childView.loadAndRender()
     }
     this.setVisible(this.visible)
-  }
-
-  /**
-     * 解析并获取动态绑定配置对应的运行期值
-     * @param {Object} dynamicBind 绑定配置
-     * @param {Object} variables 页面上下文变量对象
-     * @param {Object} scope 组件插槽变量对象
-     * @returns {Object|String} 计算结果值
-     */
-  getDynamicBindValue (dynamicBind, variables, scope) {
-    const data = Object.assign({}, variables, {
-      $scope: scope
-    })
-
-    if (dynamicBind.variable) { // 直接绑定到页面变量
-      return variables[dynamicBind.variable]
-    } else if (dynamicBind.path) {
-      return ObjectPath.get(data, dynamicBind.path)
-    } else if (dynamicBind.template) {
-      return template(dynamicBind.template, data)
-    } else if (dynamicBind.object) {
-      return this.getObjectTemplateValue(dynamicBind.object, data)
-    }
-  }
-
-  getObjectTemplateValue (object, variables) {
-    const result = {}
-
-    for (const key of Object.keys(object)) {
-      if (typeof object[key] === 'string') {
-        result[key] = template(object[key], variables)
-      } else if (typeof object[key] === 'object') {
-        result[key] = this.getObjectTemplateValue(object[key], variables)
-      } else {
-        result[key] = object[key]
-      }
-    }
-    return result
   }
 
   /**
@@ -525,30 +496,32 @@ export default class FrontComponentView {
      * @returns
      */
   convertPropTypes (props, definition) {
-    for (const propDefinition of definition) {
-      // 对于定义的属性有值，进行按类型的自字符串的转换处理
-      if (typeof props[propDefinition.name] === 'string' && propDefinition.type !== 'string') {
-        switch (propDefinition.type) {
-          case 'boolean':
-            if (props[propDefinition.name] === 'false' || props[propDefinition.name] === '0' || props[propDefinition.name] === '') {
-              props[propDefinition.name] = false
-            } else {
-              props[propDefinition.name] = Boolean(props[propDefinition.name])
-            }
-            break
-          case 'object':
-          case 'array':
-            try {
-              props[propDefinition.name] = JSON.parse(props[propDefinition.name])
-            } catch (e) {
-              // 只是尝试转换 失败了保持旧值
-            }
-            break
-          case 'number':
-            props[propDefinition.name] = Number(props[propDefinition.name])
-            break
-          default:
-            break
+    if (definition) {
+      for (const propDefinition of definition) {
+        // 对于定义的属性有值，进行按类型的自字符串的转换处理
+        if (typeof props[propDefinition.name] === 'string' && propDefinition.type !== 'string') {
+          switch (propDefinition.type) {
+            case 'boolean':
+              if (props[propDefinition.name] === 'false' || props[propDefinition.name] === '0' || props[propDefinition.name] === '') {
+                props[propDefinition.name] = false
+              } else {
+                props[propDefinition.name] = Boolean(props[propDefinition.name])
+              }
+              break
+            case 'object':
+            case 'array':
+              try {
+                props[propDefinition.name] = JSON.parse(props[propDefinition.name])
+              } catch (e) {
+                // 只是尝试转换 失败了保持旧值
+              }
+              break
+            case 'number':
+              props[propDefinition.name] = Number(props[propDefinition.name])
+              break
+            default:
+              break
+          }
         }
       }
     }
@@ -723,9 +696,9 @@ export default class FrontComponentView {
       let rect = this.el.getBoundingClientRect()
 
       if (this.el.style.display === 'none') {
-        this.el.style.display === ''
+        this.el.style.display = ''
         rect = this.el.getBoundingClientRect()
-        this.el.style.display === 'none'
+        this.el.style.display = 'none'
       }
 
       if (rect.width > 0 && rect.height > 0) {

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { DATA_DISPLAY_ELEMENT_ID } from '../const'
-import { FCView, FcView } from 'display-view'
+import { FCView } from 'display-view'
 
 export const insertElement = ({
   x,
@@ -14,22 +14,28 @@ export const insertElement = ({
     loader,
     el: div,
     fcInstanceConfig: {},
-    component,
+    component: {
+      packageName: component.pkg,
+      path: component.code,
+      dependencies: Object.keys(component.pkgDependencies)
+    },
     context: {}
   })
-
-  fcView.loadAndRender()
   const uniqueId = _.uniqueId('element_')
 
   div.className = 'element-wrapper'
-
   div.setAttribute(DATA_DISPLAY_ELEMENT_ID, uniqueId)
   div.setAttribute('id', uniqueId)
   div.style.position = 'absolute'
-  div.style.left = x + 'px'
-  div.style.top = y + 'px'
-  div.style.width = fcView.width + 'px'
-  div.style.height = fcView.height + 'px'
-  div.style.border = '1px solid #ccc'
+  div.style.left = (x - component.width / 2) + 'px'
+  div.style.top = (y - component.height / 2) + 'px'
+  div.style.width = component.width + 'px'
+  div.style.height = component.height + 'px'
+
+  fcView.loadAndRender().then(() => {
+
+  })
+
+  div.fcView = fcView
   return div
 }

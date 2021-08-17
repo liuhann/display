@@ -11,6 +11,7 @@ export default standardLatest => {
     for (const com of pkg.components) {
       packageInfo.components.push(Object.assign({}, com, {
         pkg: pkg.name,
+        pkgDependencies: pkg.dependencies,
         preview: `https://www.unpkg.com/${pkg.name}@${pkg.version}/${com.preview}`
       }))
     }

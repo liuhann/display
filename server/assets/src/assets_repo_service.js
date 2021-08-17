@@ -141,6 +141,7 @@ module.exports = class ApplicationRepoService {
         snapshot: versionData.snapshot,
         license: versionData.license,
         icon: versionData.icon,
+        dependencies: versionData.dependencies,
         publish_time: new Date(versionData.publish_time),
         components: versionData.components
       })
