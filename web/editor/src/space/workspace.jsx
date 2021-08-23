@@ -23,6 +23,7 @@ export default ({
 
   const [sceneX, setSceneX] = useState(0)
   const [sceneY, setSceneY] = useState(0)
+  const [elements, setElements] = useState(rootElements)
 
   const onDragEnter = event => {
     console.log('drag enter')
@@ -40,6 +41,21 @@ export default ({
       x: event.clientX - containerRect.x,
       y: event.clientY - containerRect.y,
       loader: theme.fcLoader,
+      componentReady: fcView => {
+        console.log(fcView)
+        const element = {
+          id: fcView.uuid
+        }
+        elements.push({
+          id: fcView.uuid
+        })
+        theme.store.dispatch({
+          action: 'element/insert',
+          payload: element
+        })
+        setElements(elements)
+        elementChange && elementChange(elements)
+      },
       component
     })
     const root = sceneRef.current

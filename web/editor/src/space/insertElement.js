@@ -6,6 +6,7 @@ export const insertElement = ({
   x,
   y,
   loader,
+  componentReady,
   component
 }) => {
   const div = document.createElement('div')
@@ -33,7 +34,7 @@ export const insertElement = ({
   div.style.height = component.height + 'px'
 
   fcView.loadAndRender().then(() => {
-
+    componentReady && componentReady(fcView)
   })
 
   div.fcView = fcView

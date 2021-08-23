@@ -40,6 +40,7 @@ export default class Editor extends React.Component {
 
   async fetchAssetTree () {
     const { config  } = this.context
+    console.log('context store', this.context.store)
     this.assetDao = new AssetDAO(config.serviceUrl)
     const assets = await this.assetDao.getPublicAssets()
     this.setState({
