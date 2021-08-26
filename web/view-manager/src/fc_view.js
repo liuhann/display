@@ -50,10 +50,6 @@ export default class FrontComponentView {
     } else {
       this.visible = true
     }
-
-    if (!this.loaded) {
-      this.setLoading(true)
-    }
   }
 
   /**
@@ -63,6 +59,8 @@ export default class FrontComponentView {
     if (this.loaded) {
       return
     }
+    this.initElement()
+    this.setLoading(true)
     log('loadComponentDefinition', this.component)
 
     // 加载组件定义信息
@@ -387,31 +385,12 @@ export default class FrontComponentView {
         }
       }
     }
+    this.updateLayoutProp()
+
+    this.el.style.background = ''
+
     try {
-      if (this.el.style.position === 'absolute') {
-        // 对于绝对定位的元素，直接给定绝对定位的宽高信息
-        if (this.el.style.width && this.el.style.height) {
-          this.instancePropConfig.width = parseInt(this.el.style.width)
-          this.instancePropConfig.height = parseInt(this.el.style.height)
-        }
-      } else {
-        let rect = this.el.getBoundingClientRect()
-
-        if (this.el.style.display === 'none') {
-          this.el.style.display = ''
-          rect = this.el.getBoundingClientRect()
-          this.el.style.display = 'none'
-        }
-
-        if (rect.width > 0 && rect.height > 0) {
-          this.instancePropConfig.width = rect.width
-          this.instancePropConfig.height = rect.height
-        }
-      }
-      this.el.style.background = ''
-
       log('mount with', this.fcInstanceConfig.guid, this.instancePropConfig)
-
       this.renderer = this.componentDefinition.factory.mount(this.el, this.instancePropConfig)
       // 检查数据获取是否满足， 如果未获取 显示一个加载中的遮罩层
       this.checkDBLoaded()
@@ -422,6 +401,13 @@ export default class FrontComponentView {
       log(e)
     }
     this.setVisible(this.visible)
+  }
+
+  updateLayoutProp () {
+    if (this.position.type === 'absolute' && this.instancePropConfig) {
+      this.instancePropConfig.width = this.position.width
+      this.instancePropConfig.height = this.position.height
+    }
   }
 
   async relativeContainerMount (el) {
@@ -449,8 +435,16 @@ export default class FrontComponentView {
 
       childView.el = div
       await childView.loadAndRender()
+
+      this.setVisible(this.visible)
     }
-    this.setVisible(this.visible)
+  }
+
+  setPosition (position) {
+    this.position = Object.assign({}, this.position, position)
+    this.updateLayoutProp()
+    this.updatePositionStyle()
+    this.updateProps()
   }
 
   /**
@@ -459,19 +453,20 @@ export default class FrontComponentView {
      * @param {Object} variables 新的页面变量信息
      */
   updateProps (props) {
-    this.instancePropConfig.contextVariables = this.contextVariables
-
-    if (!props) {
-      // 如果未传入属性，则更新所有动态属性
-      for (const reactiveProp in this.fcInstanceConfig.reactiveProps) {
-        this.instancePropConfig[reactiveProp] = template(this.fcInstanceConfig.reactiveProps[reactiveProp], Object.assign({}, this.contextVariables, {
-          $scope: this.scopeVariables
-        }))
-      }
-    } else {
+    if (props) {
       // 只更新特定的值
       Object.assign(this.instancePropConfig, props)
     }
+    // if (!props) {
+    //   // 如果未传入属性，则更新所有动态属性
+    //   for (const reactiveProp in this.fcInstanceConfig.reactiveProps) {
+    //     this.instancePropConfig[reactiveProp] = template(this.fcInstanceConfig.reactiveProps[reactiveProp], Object.assign({}, this.contextVariables, {
+    //       $scope: this.scopeVariables
+    //     }))
+    //   }
+    // } else {
+
+    // }
 
     if (this.renderer) {
       try {
@@ -561,6 +556,31 @@ export default class FrontComponentView {
     }
   }
 
+  updatePositionStyle () {
+    const { el } = this
+    if (!el) {
+      return
+    }
+    if (this.position) {
+      if (this.position.type === 'absolute') {
+        el.style.position = 'absolute'
+        el.style.left = this.position.x + 'px'
+        el.style.top = this.position.y + 'px'
+        el.style.width = this.position.width + 'px'
+        el.style.height = this.position.height + 'px'
+      }
+    }
+  }
+
+  initElement () {
+    const { el } = this
+    if (el) {
+      el.className = 'element-wrapper'
+      el.setAttribute('id', this.uuid)
+      this.updatePositionStyle()
+    }
+  }
+
   /**
      * 设置加载状态
      * @param {*} isLoading
@@ -588,20 +608,6 @@ export default class FrontComponentView {
           this.el.removeChild(loadingEl)
         }
       }
-    }
-  }
-
-  /**
-     * 设置更改节点位置
-     * @param x
-     * @param y
-     */
-  setPosition ({ x, y }) {
-    if (x) {
-      this.el.style.left = x + 'px'
-    }
-    if (y) {
-      this.el.style.top = y + 'px'
     }
   }
 

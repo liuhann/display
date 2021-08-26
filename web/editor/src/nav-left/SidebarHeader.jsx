@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import './style.css'
 import Menu from '@material-ui/core/Menu'
 import Button from '@material-ui/core/Button'
@@ -12,6 +12,8 @@ import CheckIcon from '@material-ui/icons/Check'
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz'
 import BrokenImageIcon from '@material-ui/icons/BrokenImage'
 import { makeStyles, withStyles } from '@material-ui/core/styles'
+
+import { ThemeContext } from 'async-boot-react/src/module/boot-context.js'
 
 import { green, grey } from '@material-ui/core/colors'
 
@@ -72,6 +74,13 @@ const TitleMenu = ({
   handleClose
 }) => {
   const classes = useStyles()
+
+  const theme = useContext(ThemeContext)
+
+  const savePage = () => {
+    console.log(theme.store.getState())
+  }
+
   return (
     <StyledMenu
       anchorEl={anchorEl}
@@ -79,7 +88,7 @@ const TitleMenu = ({
       open={Boolean(anchorEl)}
       onClose={handleClose}
     >
-      <StyledMenuItem onClick={() => exeCommand('save')}>
+      <StyledMenuItem onClick={() =>savePage()}>
         <SaveIcon
           style={{
             marginRight: '5px'

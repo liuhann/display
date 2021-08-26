@@ -44,17 +44,16 @@ export default ({
       componentReady: fcView => {
         console.log(fcView)
         const element = {
-          id: fcView.uuid
+          id: fcView.uuid,
         }
         elements.push({
           id: fcView.uuid
         })
         theme.store.dispatch({
-          action: 'element/insert',
+          type: 'element/insert',
           payload: element
         })
         setElements(elements)
-        elementChange && elementChange(elements)
       },
       component
     })

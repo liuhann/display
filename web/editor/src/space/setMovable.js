@@ -23,14 +23,25 @@ const setElementMovable = (root, el, guideElementSelector = '.element-wrapper') 
   moveable.on('resizeStart', e => {
   }).on('drag', e => {
     const beforeDelta = e.beforeDelta
-    e.target.style.left = (parseFloat(e.target.style.left) + beforeDelta[0]) + 'px'
-    e.target.style.top = (parseFloat(e.target.style.top) + beforeDelta[1]) + 'px'
+    e.target.fcView && e.target.fcView.setPosition({
+      x: (parseFloat(e.target.style.left) + beforeDelta[0]),
+      y: (parseFloat(e.target.style.top) + beforeDelta[1])
+    })
+    // e.target.style.left = (parseFloat(e.target.style.left) + beforeDelta[0]) + 'px'
+    // e.target.style.top = (parseFloat(e.target.style.top) + beforeDelta[1]) + 'px'
   }).on('resize', e => {
     const beforeDelta = e.drag.beforeDelta
-    e.target.style.width = `${e.width}px`
-    e.target.style.height = `${e.height}px`
-    e.target.style.left = (parseFloat(e.target.style.left) + beforeDelta[0]) + 'px'
-    e.target.style.top = (parseFloat(e.target.style.top) + beforeDelta[1]) + 'px'
+    e.target.fcView && e.target.fcView.setPosition({
+      width: e.width,
+      height: e.height,
+      x: (parseFloat(e.target.style.left) + beforeDelta[0]),
+      y: (parseFloat(e.target.style.top) + beforeDelta[1])
+    })
+
+    // e.target.style.width = `${e.width}px`
+    // e.target.style.height = `${e.height}px`
+    // e.target.style.left = (parseFloat(e.target.style.left) + beforeDelta[0]) + 'px'
+    // e.target.style.top = (parseFloat(e.target.style.top) + beforeDelta[1]) + 'px'
     // e.target.style.transform = `translate(${beforeTranslate[0]}px, ${beforeTranslate[1]}px)`
   })
 
