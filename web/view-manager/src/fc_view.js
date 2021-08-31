@@ -18,16 +18,17 @@ export default class FrontComponentView {
     el,
     component,
     fcInstanceConfig,
-    loader,
     context,
+    loader,
     preloadChild
   }) {
     this.el = el
     this.uuid = _.uniqueId('fc_')
     this.component = component
     this.fcInstanceConfig = fcInstanceConfig
-    this.loader = loader
     this.context = context
+
+    this.loader = loader
 
     // 回调列表
     this.eventCallbacks = {}
@@ -522,6 +523,11 @@ export default class FrontComponentView {
     }
     return props
   }
+
+  componentDidMount () {
+  }
+
+  componentDidUpdate () {}
 
   /**
      *

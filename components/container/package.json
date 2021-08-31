@@ -1,0 +1,31 @@
+{
+  "name": "display-container",
+  "version": "1.0.2",
+  "description": "布局容器",
+  "main": "index.js",
+  "scripts": {
+    "build": "build-fc",
+    "build-src": "build-fc --no-minimize",
+    "storybook": "start-storybook -p 6006"
+  },
+  "devDependencies": {
+    "display-build": "^1.0.0"
+  },
+  "dependencies": {
+    "display-storybook-preset": "^1.0.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0"
+  },
+  "components": [
+    {
+      "name": "RelativeContainer",
+      "label": "相对布局",
+      "preview": "previews/Pagination.svg",
+      "code": "build/relative-container.js",
+      "width": 480,
+      "height": 480
+    }
+  ],
+  "author": "",
+  "license": "ISC"
+}

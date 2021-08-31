@@ -44,7 +44,7 @@ export default class Editor extends React.Component {
     this.assetDao = new AssetDAO(config.serviceUrl)
     const assets = await this.assetDao.getPublicAssets()
     this.setState({
-      treeData: toTreeData(assets.data)
+      treeData: toTreeData(assets.data, config.loader)
     })
   }
 
@@ -167,7 +167,7 @@ export default class Editor extends React.Component {
               }}
             >
               <Toolbar shows={toolbarShow} onShowChange={onToolbarShowChange} />
-              <WorkSpace zoom={1} rootElements={[]} width={workspaceWidth} height={fullScreen ? (windowHeight - 40) : (windowHeight - 60)} />
+              <WorkSpace zoom={toolbarShow.scale} rootElements={[]} width={workspaceWidth} height={fullScreen ? (windowHeight - 40) : (windowHeight - 60)} />
             </div>
             {showPanel && !fullScreen &&
               <div

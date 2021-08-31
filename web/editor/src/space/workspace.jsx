@@ -42,18 +42,11 @@ export default ({
       y: event.clientY - containerRect.y,
       loader: theme.fcLoader,
       componentReady: fcView => {
-        console.log(fcView)
-        const element = {
-          id: fcView.uuid,
-        }
-        elements.push({
-          id: fcView.uuid
-        })
         theme.store.dispatch({
           type: 'element/insert',
-          payload: element
+          payload: fcView
         })
-        setElements(elements)
+        // setElements(elements)
       },
       component
     })
@@ -103,8 +96,14 @@ export default ({
     height: height ? height + 'px' : '100%',
     border: '1px solid #eee'
   }
-  if (zoom !== 1) {
-    style.transform = `scale(${zoom})`
+
+  const screenStyle = {
+    left: (sceneX + 24) + 'px',
+    top: (sceneY + 24) + 'px',
+    position: 'absolute',
+    background: '#fff',
+    width: zoom * viewPortWidth + 'px',
+    height: zoom * viewPortHeight + 'px'
   }
 
   return (
@@ -113,14 +112,7 @@ export default ({
         <div
           onDragOver={onDragEnter}
           onDrop={onDrop}
-          className='screen' style={{
-            left: (sceneX + 24) + 'px',
-            top: (sceneY + 24) + 'px',
-            position: 'absolute',
-            background: '#fff',
-            width: viewPortWidth + 'px',
-            height: viewPortHeight + 'px'
-          }} ref={sceneRef}
+          className='screen' style={screenStyle} ref={sceneRef}
         />
       </div>
       <Ruler
@@ -136,8 +128,6 @@ export default ({
           left: '24px',
           top: 0,
           zIndex: 9999
-          // width: (width - 24) + 'px',
-          // height: '24px'
         }}
         backgroundColor='#333333'
         textColor='#ffffff'
@@ -167,7 +157,6 @@ export default ({
           left: 0,
           zIndex: 9999,
           top: '24px'
-          // width: '24px',
         }}
         backgroundColor='#333333'
         textColor='#ffffff'

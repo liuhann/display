@@ -1,7 +1,9 @@
 {
   "name": "display",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "runtime": "npm run serve --workspace=display-app"
+  },
   "workspaces": [
     "utils/*",
     "web/*",

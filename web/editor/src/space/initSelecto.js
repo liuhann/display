@@ -5,7 +5,8 @@ const initSelecto = ({
   root,
   selector,
   zoom,
-  containerDrag
+  containerDrag,
+  containerZoom
 }) => {
   // 单项选择及操作
   let movableTarget = null

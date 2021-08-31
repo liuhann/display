@@ -1,4 +1,10 @@
-function counterReducer (state = { pageConfig: {}, elements: [] }, action) {
+function counterReducer (state = {
+  pageConfig: {},
+  elements: [],
+  editorConfig: {
+    zoom: 1
+  }
+}, action) {
   switch (action.type) {
     case 'element/insert':
       state.elements.push(action.payload)
