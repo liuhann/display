@@ -1,6 +1,6 @@
 import Selecto from 'selecto'
-import { setElementsMovable, setElementMovable } from './setMovable'
-import { getParentDisplayElement } from '../utils/utils'
+import { setElementsMovable, setElementMovable } from './setMovable.js'
+import { getParentDisplayElement } from './utils.js'
 const initSelecto = ({
   root,
   selector,

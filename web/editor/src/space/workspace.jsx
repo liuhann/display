@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 
 import Ruler from '../ruler/ruler.jsx'
-import { initSelecto } from './initSelecto'
+import { initSelecto } from 'selectable-movable'
 import { ThemeContext } from 'async-boot-react/src/module/boot-context.js'
 import { insertElement } from './insertElement.js'
 

@@ -33,24 +33,43 @@ const initOrResizeContainer = (workspaceEl, fcView) => {
   }
 
   alignRect()
-  inlineContainer.removeEventListener('dragover', onDragEnter)
-  inlineContainer.addEventListener('dragover', onDragEnter)
+  // inlineContainer.removeEventListener('dragover', onDragEnter)
+  // inlineContainer.addEventListener('dragover', onDragEnter)
 
-  const containerDropNode = onDrop((containerRect, component, event) => {
-    const insertedElementDiv = insertElement({
-      x: event.clientX - containerRect.x,
-      y: event.clientY - containerRect.y,
-      loader: fcView.loader,
-      componentReady: childFcView => {
-        fcView.invoke('insert', childFcView)
-      },
-      component
-    })
-    inlineContainer.appendChild(insertedElementDiv)
+  // const containerDropNode = onDrop((containerRect, component, event) => {
+  //   fcView.invoke('insertChild', component, {
+  //     x: event.clientX,
+  //     y: event.clientY
+  //   })
+  // })
+
+  fcView.on('componentDropped', (child) => {
+    fcView.instancePropConfig.children.push(child)
+    fcView.updateProps()
   })
 
-  inlineContainer.removeEventListener('drop', containerDropNode)
-  inlineContainer.addEventListener('drop', containerDropNode)
+  fcView.on('componentSelected', () => {
+
+  })
+  fcView.on('componentRectChange', () => {
+
+  })
+  fcView.on('componentPropChange', () => {
+
+  })
+  fcView.unmount()
+
+  fcView.updateProps({
+    containerEdit: true
+  })
+
+  fcView.mount(inlineContainer)
+
+  // 切换到编辑状态
+  // fcView.invoke('edit')
+
+  // inlineContainer.removeEventListener('drop', containerDropNode)
+  // inlineContainer.addEventListener('drop', containerDropNode)
 
   const objResizeObserver = new window.ResizeObserver(function () {
     window.requestAnimationFrame(() => {

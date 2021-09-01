@@ -54,6 +54,38 @@ export default class FrontComponentView {
   }
 
   /**
+   * 为当前组件（容器类）创建包含的子组件
+   * @param {*} param0
+   * @returns
+   */
+  createChildView ({
+    el,
+    component,
+    fcInstanceConfig
+  }) {
+    return new FrontComponentView({
+      el,
+      component,
+      fcInstanceConfig,
+      context: this.context,
+      loader: this.loader,
+      preloadChild: false
+    })
+  }
+
+  async createAndLoadRenderChildView ({
+    el,
+    component,
+    fcInstanceConfig
+  }) {
+    const childFcView = this.createChildView({
+      el,
+      component,
+      fcInstanceConfig
+    })
+  }
+
+  /**
      * 加载组件定义信息（fcp），包括组件的渲染引擎（执行代码）
      */
   async loadComponentDefinition () {
@@ -132,14 +164,10 @@ export default class FrontComponentView {
   async initChildViews () {
     // 直接从布局设置了若干子节点
     for (const children of this.fcInstanceConfig.children || []) {
-      const childView = new FrontComponentView({
-        fcInstanceConfig: children,
-        loader: this.loader,
-        apolloApp: this.apolloApp,
-        contextVariables: this.contextVariables,
-        scopeVariables: this.scopeVariables,
-        preloadChild: this.preloadChild,
-        pageId: this.pageId
+      const childView = this.createChildView({
+        el,
+        component: children.component,
+        fcInstanceConfig: children.fcInstanceConfig
       })
 
       childView.pageId = this.pageId
@@ -404,6 +432,28 @@ export default class FrontComponentView {
     this.setVisible(this.visible)
   }
 
+  unmount () {
+    if (this.childrenFcViews && this.childrenFcViews.length) {
+      for (const childFcView of this.childrenFcViews) {
+        childFcView.unmount()
+      }
+    }
+
+    if (this.slotFcViews && this.slotFcViews.length) {
+      for (const slotFcView of this.slotFcViews) {
+        slotFcView.unmount()
+      }
+    }
+
+    // 回调内容清空
+    this.eventPayloadStack = {}
+
+    if (this.el && this.renderer) {
+      this.renderer.destroy()
+      this.renderer = null
+    }
+  }
+
   updateLayoutProp () {
     if (this.position.type === 'absolute' && this.instancePropConfig) {
       this.instancePropConfig.width = this.position.width
@@ -458,17 +508,6 @@ export default class FrontComponentView {
       // 只更新特定的值
       Object.assign(this.instancePropConfig, props)
     }
-    // if (!props) {
-    //   // 如果未传入属性，则更新所有动态属性
-    //   for (const reactiveProp in this.fcInstanceConfig.reactiveProps) {
-    //     this.instancePropConfig[reactiveProp] = template(this.fcInstanceConfig.reactiveProps[reactiveProp], Object.assign({}, this.contextVariables, {
-    //       $scope: this.scopeVariables
-    //     }))
-    //   }
-    // } else {
-
-    // }
-
     if (this.renderer) {
       try {
         log('updateProps', this.fcId, this.instancePropConfig)
@@ -726,28 +765,6 @@ export default class FrontComponentView {
       for (const childFcView of this.childrenFcViews) {
         childFcView.layout()
       }
-    }
-  }
-
-  unmount () {
-    if (this.childrenFcViews && this.childrenFcViews.length) {
-      for (const childFcView of this.childrenFcViews) {
-        childFcView.unmount()
-      }
-    }
-
-    if (this.slotFcViews && this.slotFcViews.length) {
-      for (const slotFcView of this.slotFcViews) {
-        slotFcView.unmount()
-      }
-    }
-
-    // 回调内容清空
-    this.eventPayloadStack = {}
-
-    if (this.el && this.renderer) {
-      this.renderer.destroy()
-      this.renderer = null
     }
   }
 

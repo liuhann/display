@@ -1,6 +1,6 @@
 {
   "name": "display-container",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "布局容器",
   "main": "index.js",
   "scripts": {
@@ -12,6 +12,7 @@
     "display-build": "^1.0.0"
   },
   "dependencies": {
+    "selectable-movable": "^1.0.0",
     "display-storybook-preset": "^1.0.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0"

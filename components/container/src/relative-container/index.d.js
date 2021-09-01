@@ -7,5 +7,22 @@ export default {
   component: RelativeContainer,
   inPlaceEditor: true,
   // 可配置属性列表，具体规则看样例
-  props: []
+  props: [{
+    name: 'children',
+    label: '子节点列表',
+    value: []
+  }, {
+    label: '容器编辑',
+    name: 'containerEdit',
+    value: false
+  }],
+  events: [{
+    name: 'componentDropped'
+  }, {
+    name: 'componentSelected'
+  }, {
+    name: 'componentSelected'
+  }, {
+    name: 'componentSelected'
+  }]
 }

@@ -2,7 +2,7 @@
   "name": "display",
   "private": true,
   "scripts": {
-    "runtime": "npm run serve --workspace=display-app"
+    "editor": "npm run serve --workspace=display-app"
   },
   "workspaces": [
     "utils/*",
