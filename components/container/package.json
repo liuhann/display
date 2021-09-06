@@ -1,6 +1,6 @@
 {
   "name": "display-container",
-  "version": "1.0.3",
+  "version": "1.0.3-SNAPSHOT-3",
   "description": "布局容器",
   "main": "index.js",
   "scripts": {

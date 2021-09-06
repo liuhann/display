@@ -5,8 +5,6 @@ export default class RelativeContainer extends React.Component {
   constructor () {
     super()
     this.childFcViews = {}
-    this.state = {
-    }
     this.$el = React.createRef()
   }
 
@@ -16,7 +14,7 @@ export default class RelativeContainer extends React.Component {
 
   componentDidMount () {
     const { currentFcView, children } = this.props
-    for (const child of children) {
+    for (const child of children || []) {
       const el = document.getElementById(child.fcid)
       const childFcView = currentFcView.createChildView({
         el,
@@ -32,31 +30,10 @@ export default class RelativeContainer extends React.Component {
     }
   }
 
-  /**
-   * 数据更新， 重新检查所有childFcView、处理子节点interact
-   */
-  componentDidUpdate (prevProps, prevState, snapshot) {
-    const { currentFcView, children } = this.props
-
-    for (const child of children || []) {
-      if (!this.childFcViews[child.fcid]) {
-        const el = document.getElementById(child.fcid)
-        const childFcView = currentFcView.createChildView({
-          el,
-          component: child.component,
-          instanceConfig: child.config
-        })
-        childFcView.loadAndRender()
-        this.childFcViews[child.fcid] = childFcView
-      }
-    }
-  }
-
   // 支持拖拽放置组件
   initDnd () {
     const containerDropNode = onDrop((containerRect, component, event) => {
-      this.props.componentDropped && this.props.componentDropped({
-        component: component,
+      this.insertChildElement(component, {
         x: event.clientX,
         y: event.clientY
       })
@@ -70,12 +47,38 @@ export default class RelativeContainer extends React.Component {
     }
   }
 
+  insertChildElement (component, position, instanceConfig) {
+    const div = document.createElement('div')
+
+    const fcView = this.props.currentFcView.createChildView({
+      el: div,
+      component,
+      fcInstanceConfig: {}
+    })
+
+    fcView.setPosition({
+      type: 'absolute',
+      x: (position.x - component.width / 2),
+      y: (position.y - component.height / 2),
+      width: component.width,
+      height: component.height
+    })
+
+    fcView.loadAndRender()
+  }
+
   render () {
-    const { props } = this
     // 切换到编辑模式
+    const containerStyle = {
+      width: '100%',
+      position: 'relative',
+      height: '100%'
+    }
+    // 作为容器只提供一个div壳子，内部内容在后续填充。并且因为内部内容可能是其他方式渲染的，这里要求render方法不能被重新调用
+    console.error('容器更新！可能会产生异常情况')
     return (
-      <div clasName='relative-contaienr' ref={this.$el}>
-        {props && props.children && props.children.map((c, index) => <div key={index} className='relatvie-child edit' data-index={index} id={c.fcid} />)}
+      <div clasName='relative-container' ref={this.$el} style={containerStyle}>
+        {/* {props && props.children && props.children.map((c, index) => <div key={index} className='relatvie-child edit' data-index={index} id={c.fcid} />)} */}
       </div>
     )
   }

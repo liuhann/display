@@ -163,7 +163,7 @@ export default class FCLoader {
    * }
    */
   async loadComponent (packageName, path, dependencies) {
-    const componentUri = `${packageName}/${path}`
+    const componentUri = `${packageName}@latest/${path}`
     const cache = this.getComponent(componentUri)
 
     if (cache) {

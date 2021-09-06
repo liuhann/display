@@ -157,7 +157,7 @@ export default class FrontComponentView {
         return
       }
       this.initPropsAndEvents()
-      this.mount(this.el)
+      this.mount()
     }
   }
 
@@ -495,7 +495,7 @@ export default class FrontComponentView {
     this.position = Object.assign({}, this.position, position)
     this.updateLayoutProp()
     this.updatePositionStyle()
-    this.updateProps()
+    // this.updateProps()
   }
 
   /**
