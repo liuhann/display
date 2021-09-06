@@ -11,6 +11,7 @@ export const insertElement = ({
   y,
   loader,
   component,
+  onComponentEdit,
   componentReady
 }) => {
   const div = document.createElement('div')
@@ -19,11 +20,7 @@ export const insertElement = ({
     loader,
     el: div,
     fcInstanceConfig: {},
-    component: {
-      packageName: component.pkg,
-      path: component.code,
-      dependencies: Object.keys(component.pkgDependencies)
-    },
+    component,
     context: {}
   })
 
@@ -41,7 +38,9 @@ export const insertElement = ({
   fcView.el.addEventListener('dblclick', e => {
     if (fcView.componentDefinition.inPlaceEditor || true) {
       const workspaceEl = document.querySelector('#editor-workspace')
-      initOrResizeContainer(workspaceEl, fcView)
+      initOrResizeContainer(workspaceEl, fcView, {
+        editorReady: onComponentEdit
+      })
       // initSelecto({
       //   root: inlineContainer,
       //   selector: '.element-wrapper'

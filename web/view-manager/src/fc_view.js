@@ -620,7 +620,11 @@ export default class FrontComponentView {
   initElement () {
     const { el } = this
     if (el) {
-      el.className = 'element-wrapper'
+      if (el.className) {
+        el.className = el.className + ' element-wrapper'
+      } else {
+        el.className = ' element-wrapper'
+      }
       el.setAttribute('id', this.uuid)
       this.updatePositionStyle()
     }

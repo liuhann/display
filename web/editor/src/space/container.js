@@ -6,11 +6,13 @@ import { insertElement } from './insertElement.js'
  * @param {*} workspaceEl 外界编辑器编辑区空间
  * @param {*} fcViewEl 需要内联编辑的容器组件
  */
-const initOrResizeContainer = (workspaceEl, fcView) => {
+const initOrResizeContainer = (workspaceEl, fcView, options) => {
   const el = document.createElement('div')
   document.body.appendChild(el)
   const inlineContainer = document.createElement('div')
   el.appendChild(inlineContainer)
+
+  const oldMountEl = fcView.el
 
   const bc = workspaceEl.getBoundingClientRect()
   const alignRect = () => {
@@ -25,6 +27,7 @@ const initOrResizeContainer = (workspaceEl, fcView) => {
     const fcBc = fcView.el.getBoundingClientRect()
     inlineContainer.style.position = 'absolute'
     inlineContainer.style.zIndex = 1002
+    inlineContainer.style.boxSizing = 'border-box'
     inlineContainer.style.left = (fcBc.x - bc.x) + 'px'
     inlineContainer.style.top = (fcBc.y - bc.y) + 'px'
     inlineContainer.style.height = fcBc.height + 'px'
@@ -32,38 +35,30 @@ const initOrResizeContainer = (workspaceEl, fcView) => {
     inlineContainer.style.border = '1px solid #778'
   }
 
+  const closeReturn = document.createElement('div')
+  closeReturn.innerHTML = '关闭'
+
+  closeReturn.onclick = (e) => {
+    document.body.removeChild(el)
+    fcView.unmount()
+    fcView.updateProps({
+      containerEdit: false
+    })
+    fcView.mount(oldMountEl)
+  }
+
+  el.append(closeReturn)
+
   alignRect()
-  // inlineContainer.removeEventListener('dragover', onDragEnter)
-  // inlineContainer.addEventListener('dragover', onDragEnter)
 
-  // const containerDropNode = onDrop((containerRect, component, event) => {
-  //   fcView.invoke('insertChild', component, {
-  //     x: event.clientX,
-  //     y: event.clientY
-  //   })
-  // })
-
-  fcView.on('componentDropped', (child) => {
-    fcView.instancePropConfig.children.push(child)
-    fcView.updateProps()
-  })
-
-  fcView.on('componentSelected', () => {
-
-  })
-  fcView.on('componentRectChange', () => {
-
-  })
-  fcView.on('componentPropChange', () => {
-
-  })
   fcView.unmount()
 
   fcView.updateProps({
     containerEdit: true
   })
-
   fcView.mount(inlineContainer)
+
+  options.editorReady && options.editorReady()
 
   // 切换到编辑状态
   // fcView.invoke('edit')
@@ -78,6 +73,8 @@ const initOrResizeContainer = (workspaceEl, fcView) => {
   })
   // 观察图片元素
   objResizeObserver.observe(workspaceEl)
+
+
 }
 
 export {

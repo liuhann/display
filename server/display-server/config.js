@@ -36,5 +36,5 @@ module.exports = {
     credentials: true
   },
   // 静态托管地址， 默认使用应用的public目录、 110版本存储目录及应用部署根目录
-  public: [storeRoot + '/public', storeRoot + '/users']
+  public: [storeRoot + '/public', storeRoot + '/users', storeRoot + '/apps']
 }

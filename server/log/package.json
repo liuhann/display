@@ -1,0 +1,24 @@
+{
+  "name": "wind-core-log",
+  "version": "0.1.6",
+  "description": "日志处理服务",
+  "main": "src/index.js",
+  "scripts": {},
+  "author": {
+    "name": "刘晗",
+    "email": "liuhan@goldwind.com.cn"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@gw/eslint-config-common": "^1.0.0"
+  },
+  "dependencies": {
+    "log4js": "^6.3.0"
+  },
+  "publishConfig": {
+    "registry": "http://10.10.247.1:4873"
+  }
+}

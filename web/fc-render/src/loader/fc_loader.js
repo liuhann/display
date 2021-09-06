@@ -50,6 +50,14 @@ export default class FCLoader {
     }
   }
 
+  getLoadPath (path) {
+    if (this.appName) {
+      return `${this.unpkgUrl}/${this.appName}/npm_packages/${path}`
+    } else {
+      return `${this.unpkgUrl}/default/npm_packages/${path}`
+    }
+  }
+
   /**
    * 获取图元的url地址， 图元url将作为图元的唯一标识，此方法根据图元定义->图元url进行统一转换
    * @param pel 图元定义  {
@@ -147,7 +155,7 @@ export default class FCLoader {
      * 加载前端组件的代码，支持2种方式 globalThis 及 amd
      */
   async loadFCScript (url, pelLibName) {
-    const scriptUrl = `${this.unpkgUrl}/${url}`
+    const scriptUrl = this.getLoadPath(url)
 
     // 加载图元脚本，其中每个图元在编译时都已经设置到了window根上，以图元url为可以key
     await this.loadScript(scriptUrl)
@@ -163,7 +171,7 @@ export default class FCLoader {
    * }
    */
   async loadComponent (packageName, path, dependencies) {
-    const componentUri = `${packageName}@latest/${path}`
+    const componentUri = `${packageName}/${path}`
     const cache = this.getComponent(componentUri)
 
     if (cache) {
@@ -173,7 +181,7 @@ export default class FCLoader {
     try {
       // 加载组件的依赖包
       await this.confirmDependencies(dependencies)
-      await this.loadScript(`${this.unpkgUrl}/${componentUri}`)
+      await this.loadScript(this.getLoadPath(componentUri))
 
       // 打包过程中要求将图元包以  `${pel.packageName}/${pel.version}/${pel.path}`方式统一命名图元的名称， 并作为window对象的属性进行挂载，这里就按照这个path来获取
       // path的规则是 包名/版本名/图元名 或者 包名/图元名 版本名同一图元2个版本在一个页面情况下才会用到
@@ -240,10 +248,10 @@ export default class FCLoader {
       if (externalModule.style) {
         if (typeof externalModule.style === 'string') {
           // css加载不需要异步处理
-          this.loadScript(`${this.unpkgUrl}/${externalModule.style}`)
+          this.loadScript(this.getLoadPath(externalModule.style))
         }
       }
-      await this.loadScript(`${this.unpkgUrl}/${externalModule.dist}`)
+      await this.loadScript(this.getLoadPath(externalModule.dist))
 
       // 这里必须加载完成才标志为loaded。否则外部可能请求并发下载，那么后面的并发判断成功但加载未完成
       window.externalLoaded.push(externalModule.module)

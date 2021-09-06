@@ -1,11 +1,13 @@
 import React from 'react'
 import { initSelecto, onDragOver, onDrop } from 'selectable-movable'
+import { shortid } from './shortid.js'
 
 export default class RelativeContainer extends React.Component {
   constructor () {
     super()
     this.childFcViews = {}
     this.$el = React.createRef()
+    this.classShortId = 'drag-' + shortid(6)
   }
 
   initContainerDrop () {
@@ -27,6 +29,9 @@ export default class RelativeContainer extends React.Component {
 
     if (this.props.containerEdit) {
       this.initDnd()
+      this.initSelectDrag()
+    } else {
+      this.destorySelectDrag()
     }
   }
 
@@ -34,8 +39,8 @@ export default class RelativeContainer extends React.Component {
   initDnd () {
     const containerDropNode = onDrop((containerRect, component, event) => {
       this.insertChildElement(component, {
-        x: event.clientX,
-        y: event.clientY
+        x: event.clientX - containerRect.x,
+        y: event.clientY - containerRect.y
       })
     })
 
@@ -47,8 +52,37 @@ export default class RelativeContainer extends React.Component {
     }
   }
 
+  destorySelectDrag () {
+    if (this.selecto) {
+      this.selecto.destroy()
+    }
+    if (this.movableGroup) {
+      this.movableGroup.destroy()
+    }
+    if (this.movableGroup) {
+      this.movableGroup.destroy()
+    }
+  }
+
+  initSelectDrag () {
+    this.destorySelectDrag()
+    const {
+      movableGroup,
+      movableTarget,
+      selecto
+    } = initSelecto({
+      root: this.$el.current,
+      selector: this.classShortId
+    })
+
+    this.selecto = selecto
+    this.movableGroup = movableGroup
+    this.movableTarget = movableTarget
+  }
+
   insertChildElement (component, position, instanceConfig) {
     const div = document.createElement('div')
+    div.className = this.classShortId
 
     const fcView = this.props.currentFcView.createChildView({
       el: div,
@@ -64,7 +98,10 @@ export default class RelativeContainer extends React.Component {
       height: component.height
     })
 
+    div.fcView = fcView
+
     fcView.loadAndRender()
+    this.$el.current.appendChild(div)
   }
 
   render () {

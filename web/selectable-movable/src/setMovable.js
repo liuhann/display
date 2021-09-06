@@ -1,4 +1,5 @@
 import Moveable from 'moveable'
+import './style.css'
 
 const setElementMovable = (root, el, guideElementSelector = '.element-wrapper') => {
   const otherWrappers = [...document.querySelectorAll(guideElementSelector)].filter(each => each !== el)
@@ -13,6 +14,7 @@ const setElementMovable = (root, el, guideElementSelector = '.element-wrapper') 
     keepRatio: false,
     throttleResize: 0,
     elementGuidelines: otherWrappers,
+    className: 'my-movable',
     renderDirections: ['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'],
     edge: false,
     zoom: 1,

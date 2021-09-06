@@ -48,6 +48,11 @@ export default ({
         })
         // setElements(elements)
       },
+      onComponentEdit: () => {
+        if (workspaceRef.current.movableTarget) {
+          workspaceRef.current.movableTarget.destory()
+        }
+      },
       component
     })
     const root = sceneRef.current
@@ -69,6 +74,9 @@ export default ({
         setSceneY(sceneY => parseFloat(sceneY) + deltaY)
       }
     })
+
+    workspaceRef.current.movableGroup = movableGroup
+    workspaceRef.current.movableTarget = movableTarget
 
     return () => {
       if (movableGroup) {

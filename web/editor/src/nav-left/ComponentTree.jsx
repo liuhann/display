@@ -70,7 +70,16 @@ function StyledTreeItem (props) {
     img.width = 100
     img.height = 100
     event.dataTransfer.setDragImage(img, 50, 50)
-    event.dataTransfer.setData('text/plain', JSON.stringify(data))
+
+    const dragInfo = {
+      width: data.width,
+      height: data.height,
+      packageName: data.pkg,
+      path: data.code,
+      dependencies: Object.keys(data.pkgDependencies)
+    }
+
+    event.dataTransfer.setData('text/plain', JSON.stringify(dragInfo))
     treeNodeOut && treeNodeOut()
   }
   return (

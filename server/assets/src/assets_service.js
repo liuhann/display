@@ -6,6 +6,7 @@ const tar = require('tar')
 const debug = require('debug')('apollo:assets')
 const webpackExternals = require('display-dependecies')
 const path = require('path')
+const { walkAndCleanFiles, removeCleanedFile } = require('../src/walk_sync')
 // compareVersions = require('compare-versions');
 
 const ASSETS_PREFIX = '/assets'
@@ -70,6 +71,36 @@ module.exports = class AssetsService {
       ctx.body = await this.removePackage(name, ctx.request.query.app)
       await next()
     })
+
+    router.get(ASSETS_PREFIX + '/clean', async (ctx, next) => {
+      ctx.body = await this.cleanUnExternalFiles(ctx.request.query.app)
+
+      await next()
+    })
+  }
+
+  async cleanUnExternalFiles (app) {
+    const pkgFolder = await this.appService.getPackageStorage(app || 'default')
+    const { externals } = webpackExternals
+    const excludeFiles = []
+    for (const pack of externals) {
+      excludeFiles.push(pack.module + '/package.json')
+      if (pack.dist) {
+        excludeFiles.push(pack.dist)
+      }
+      if (pack.style) {
+        if (typeof pack.style === 'string') {
+          excludeFiles.push(pack.style)
+        }
+      }
+    }
+
+    const toBeClened = walkAndCleanFiles(pkgFolder + '/', excludeFiles)
+    removeCleanedFile(toBeClened)
+    return {
+      toBeClened,
+      excludeFiles
+    }
   }
 
   /**
