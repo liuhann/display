@@ -22,6 +22,8 @@ const setElementMovable = (root, el, guideElementSelector = '.element-wrapper') 
     padding: { left: 0, top: 0, right: 0, bottom: 0 }
   })
 
+  moveable.isDisplayInnerSnapDigit = true
+
   moveable.on('resizeStart', e => {
   }).on('drag', e => {
     const beforeDelta = e.beforeDelta

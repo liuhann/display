@@ -1,3 +1,0 @@
-[2021-09-06T08:54:30.500] [DEBUG] default - fetch with query name=react, version=undefined
-[2021-09-06T09:08:45.172] [DEBUG] http - HTTP Code= 100404 请求服务的地址未找到：/api/assets/clean
-[2021-09-06T09:29:36.099] [DEBUG] default - fetch with query name=react-dom, version=undefined
