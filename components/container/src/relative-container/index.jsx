@@ -10,21 +10,21 @@ export default class RelativeContainer extends React.Component {
     this.classShortId = 'drag-' + shortid(6)
   }
 
-  initContainerDrop () {
-
-  }
-
   componentDidMount () {
     const { currentFcView, children } = this.props
     for (const child of children || []) {
-      const el = document.getElementById(child.fcid)
+      const el = document.createElement('div')
+      el.className = this.classShortId
+      this.$el.current.appendChild(el)
       const childFcView = currentFcView.createChildView({
         el,
+        position: child.position,
         component: child.component,
-        instanceConfig: child.config
+        fcInstanceConfig: child.fcInstanceConfig
       })
+      el.fcView = childFcView
       childFcView.loadAndRender()
-      this.childFcViews[childFcView.uuid] = childFcView
+      this.childFcViews[childFcView.fcId] = childFcView
     }
 
     if (this.props.containerEdit) {
@@ -64,6 +64,15 @@ export default class RelativeContainer extends React.Component {
     }
   }
 
+  /**
+   * 外部编辑完成调用的方法， 此时需要将编辑的属性信息传出外部
+   */
+  getChildren () {
+    const childFcViews = Object.values(this.childFcViews)
+
+    return childFcViews.map(fcView => fcView.serialize())
+  }
+
   initSelectDrag () {
     this.destorySelectDrag()
     const {
@@ -80,27 +89,29 @@ export default class RelativeContainer extends React.Component {
     this.movableTarget = movableTarget
   }
 
-  insertChildElement (component, position, instanceConfig) {
+  insertChildElement (component, position) {
     const div = document.createElement('div')
     div.className = this.classShortId
 
-    const fcView = this.props.currentFcView.createChildView({
-      el: div,
-      component,
-      fcInstanceConfig: {}
-    })
-
-    fcView.setPosition({
+    const childPos = {
       type: 'absolute',
       x: (position.x - component.width / 2),
       y: (position.y - component.height / 2),
       width: component.width,
       height: component.height
+    }
+
+    const fcView = this.props.currentFcView.createChildView({
+      el: div,
+      component,
+      position: childPos,
+      fcInstanceConfig: {}
     })
 
     div.fcView = fcView
 
     fcView.loadAndRender()
+    this.childFcViews[fcView.fcId] = fcView
     this.$el.current.appendChild(div)
   }
 
@@ -112,7 +123,6 @@ export default class RelativeContainer extends React.Component {
       height: '100%'
     }
     // 作为容器只提供一个div壳子，内部内容在后续填充。并且因为内部内容可能是其他方式渲染的，这里要求render方法不能被重新调用
-    console.error('容器更新！可能会产生异常情况')
     return (
       <div clasName='relative-container' ref={this.$el} style={containerStyle}>
         {/* {props && props.children && props.children.map((c, index) => <div key={index} className='relatvie-child edit' data-index={index} id={c.fcid} />)} */}

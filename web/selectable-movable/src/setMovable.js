@@ -97,6 +97,7 @@ const setElementsMovable = (root, els, guideElementSelector = '.element-wrapper'
 }
 
 export {
+  Moveable,
   setElementMovable,
   setElementsMovable
 }

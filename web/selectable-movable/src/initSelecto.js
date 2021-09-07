@@ -149,5 +149,6 @@ const initSelecto = ({
 }
 
 export {
-  initSelecto
+  initSelecto,
+  Selecto
 }

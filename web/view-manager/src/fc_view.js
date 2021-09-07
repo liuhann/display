@@ -6,29 +6,50 @@ import _ from 'lodash'
 const log = debug('runtime:fc-view')
 const captureEvents = ['onclick', 'ondblclick', 'onmouseup', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseenter', 'onmouseover', 'oncontextmenu']
 
+function randomRangeId (num) {
+  let returnStr = ''
+  const charStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
+  for (let i = 0; i < num; i++) {
+    const index = Math.round(Math.random() * (charStr.length - 1))
+
+    returnStr += charStr.substring(index, index + 1)
+  }
+  return returnStr
+}
+
+function shortid (length) {
+  return randomRangeId(length || 6)
+}
+
 /**
  * 组件加载、渲染管理类。在loadAndRender过程进行组件加载等待，但在初始化之后就可以调用更新属性方法，属性会在加载完成后更新到组件显示。
  */
 export default class FrontComponentView {
   /**
      * @param {Object} fcInstanceConfig 组件配置实例
-     * @param {Loader} loader 加载器
+     * @param {String} fcInstanceConfig.fcId        组件id
+     * @param {Element} fcInstanceConfig.el         要mount到的div，可以后置设置
+     * @param {Object} fcInstanceConfig.component  组件定义信息
+     * @param {Object} fcInstanceConfig.fcInstanceConfig 组件配置信息
+     * @param {Object} fcInstanceConfig.position    组件位置、定位信息
+     * @param {Object} fcInstanceConfig.context     组件上下文信息，包括上下文数据、服务都注册到这里
      */
   constructor ({
+    fcId,
     el,
     component,
     fcInstanceConfig,
-    context,
-    loader,
-    preloadChild
+    position,
+    context
   }) {
     this.el = el
-    this.uuid = _.uniqueId('fc_')
-    this.component = component
     this.fcInstanceConfig = fcInstanceConfig
+    this.fcId = fcId || shortid(6)
+    this.component = component
     this.context = context
 
-    this.loader = loader
+    this.loader = context.loader || window.fcLoader
 
     // 回调列表
     this.eventCallbacks = {}
@@ -42,8 +63,8 @@ export default class FrontComponentView {
     this.childrenFcViews = []
     // 模板元素的节点
     this.slotFcViews = {}
-    // 设置加载时是否同时加载子节点
-    this.preloadChild = preloadChild
+
+    this.position = position
 
     // 显隐情况
     if (fcInstanceConfig.visible === false) {
@@ -54,34 +75,39 @@ export default class FrontComponentView {
   }
 
   /**
+   * 串行化保存当前配置信息
+   * @returns
+   */
+  serialize () {
+    return {
+      fcId: this.fcId,
+      component: this.component,
+      fcInstanceConfig: this.fcInstanceConfig,
+      position: this.position,
+      children: (this.childrenFcViews || []).map(fcView => fcView.serialize()),
+      slotConfigs: this.slotConfigs
+    }
+  }
+
+  /**
    * 为当前组件（容器类）创建包含的子组件
    * @param {*} param0
    * @returns
    */
   createChildView ({
+    fcId,
     el,
     component,
+    position,
     fcInstanceConfig
   }) {
     return new FrontComponentView({
       el,
+      fcId,
       component,
       fcInstanceConfig,
-      context: this.context,
-      loader: this.loader,
-      preloadChild: false
-    })
-  }
-
-  async createAndLoadRenderChildView ({
-    el,
-    component,
-    fcInstanceConfig
-  }) {
-    const childFcView = this.createChildView({
-      el,
-      component,
-      fcInstanceConfig
+      position,
+      context: this.context
     })
   }
 

@@ -107,6 +107,11 @@ module.exports = {
       module: 'lodash',
       root: '_',
       dist: 'lodash/lodash.min.js'
+    },
+    {
+      module: 'selectable-movable',
+      root: 'SelectableMovable',
+      dist: 'selectable-movable/build/select-moveable.umd.js'
     }
   ]
 }

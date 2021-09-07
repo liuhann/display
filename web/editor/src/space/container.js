@@ -1,5 +1,3 @@
-import { onDragEnter, onDrop } from './dnd.js'
-import { insertElement } from './insertElement.js'
 
 /**
  * 初始化容器编辑模板，模板本身对外界编辑区域Resize做出相应调整
@@ -22,7 +20,7 @@ const initOrResizeContainer = (workspaceEl, fcView, options) => {
     el.style.top = bc.y + 'px'
     el.style.height = bc.height + 'px'
     el.style.width = bc.width + 'px'
-    el.style.background = 'rgba(255, 255, 255, .2)'
+    el.style.background = 'rgba(255, 255, 255, .7)'
 
     const fcBc = fcView.el.getBoundingClientRect()
     inlineContainer.style.position = 'absolute'
@@ -39,12 +37,16 @@ const initOrResizeContainer = (workspaceEl, fcView, options) => {
   closeReturn.innerHTML = '关闭'
 
   closeReturn.onclick = (e) => {
-    document.body.removeChild(el)
-    fcView.unmount()
-    fcView.updateProps({
+    const children = fcView.invoke('getChildren')
+    const newProps = {
+      children,
       containerEdit: false
-    })
+    }
+
+    fcView.unmount()
+    fcView.updateProps(newProps)
     fcView.mount(oldMountEl)
+    document.body.removeChild(el)
   }
 
   el.append(closeReturn)
@@ -73,8 +75,6 @@ const initOrResizeContainer = (workspaceEl, fcView, options) => {
   })
   // 观察图片元素
   objResizeObserver.observe(workspaceEl)
-
-
 }
 
 export {
