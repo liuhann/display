@@ -257,6 +257,24 @@ module.exports = class AssetsService {
       await fs.renameSync(`${pkgFolder}/package/${fileName}`, `${pkgFolder}/${fileName}`)
     })
 
+    // 判断是否是外部模块， 外部模块要排除多余的文件，只使用声明的文件
+    const externalModule = webpackExternals.externals.filter(ex => name === ex.module)[0]
+
+    if (externalModule) {
+      const excludeFiles = []
+      excludeFiles.push('/package.json')
+      if (externalModule.dist) {
+        excludeFiles.push(externalModule.dist)
+      }
+      if (externalModule.style) {
+        if (typeof externalModule.style === 'string') {
+          excludeFiles.push(externalModule.style)
+        }
+      }
+      const toBeClened = walkAndCleanFiles(pkgFolder + '/', excludeFiles)
+      removeCleanedFile(toBeClened)
+    }
+
     const dependencies = packageInfo.versions[useVersion].dependencies
     const installedDependencies = []
 

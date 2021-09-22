@@ -1,10 +1,24 @@
 import Selecto from 'selecto'
 import { setElementsMovable, setElementMovable } from './setMovable.js'
-import { getParentDisplayElement } from './utils.js'
+
+export function getParentDisplayElement (el, className) {
+  if (!el) {
+    return null
+  }
+  if (el.className.split(' ').indexOf(className) > -1) {
+    return el
+  }
+  return getParentDisplayElement(el.parentElement, className)
+}
+
 const initSelecto = ({
   root,
   selector,
   zoom,
+  onDragStart, // 选择拖拽开始 （未选择任何组件）
+  onElementSelected, // 单个组件选中事件
+  onElementMove, // 组件移动
+  onElementResize, // 组件调整大小
   containerDrag,
   containerZoom
 }) => {
@@ -23,7 +37,7 @@ const initSelecto = ({
     // The area to drag selection element (default: container)
     dragContainer: root,
     // Targets to select. You can register a queryselector or an Element.
-    selectableTargets: [selector],
+    selectableTargets: ['.' + selector],
     // Whether to select by click (default: true)
     selectByClick: true,
     // Whether to select from the target inside (default: true)
@@ -32,7 +46,8 @@ const initSelecto = ({
     continueSelect: false,
     // Determines which key to continue selecting the next target via keydown and keyup.
     toggleContinueSelect: 'shift',
-    // zoom: 1 / zoom,
+    // zoom,
+    zoom: 1 / zoom,
     // The container for keydown and keyup events
     keyContainer: root,
     // The rate at which the target overlaps the drag area to be selected. (default: 100)
@@ -67,21 +82,39 @@ const initSelecto = ({
     } else {
       isMovingContainer = false
       // 如果有选中节点或者群组，判断是否还继续拖拽处理 (选择到了节点就结束拖拽了)
-      const fcViewWrapper = getParentDisplayElement(target)
+      const fcViewWrapper = getParentDisplayElement(target, selector)
       if (fcViewWrapper) {
         if (movableTarget) {
+          // 已经选择了另外的节点
           if (movableTarget.target !== fcViewWrapper) {
             movableTarget.destroy()
-            movableTarget = setElementMovable(root, fcViewWrapper, selector)
+            movableTarget = setElementMovable({
+              root,
+              el: fcViewWrapper,
+              zoom,
+              onElementMove,
+              onElementResize,
+              guideElementSelector: selector
+            })
+            onElementSelected && onElementSelected(fcViewWrapper)
             movableTarget.dragStart(inputEvent)
           }
         } else {
           // 有选中节点，但是没有已存的目标和群组： 选中当前节点
-          movableTarget = setElementMovable(root, fcViewWrapper, selector)
+          movableTarget = setElementMovable({
+            root,
+            el: fcViewWrapper,
+            zoom,
+            onElementMove,
+            onElementResize,
+            guideElementSelector: selector
+          })
+          onElementSelected && onElementSelected(fcViewWrapper)
           movableTarget.dragStart(inputEvent)
         }
         e.stop()
       } else {
+        onDragStart && onDragStart()
         if (movableTarget) {
           movableTarget.destroy()
           movableTarget = null
@@ -119,10 +152,26 @@ const initSelecto = ({
           return
         } else {
           movableTarget.destroy()
-          movableTarget = setElementMovable(root, selectedElement)
+          movableTarget = setElementMovable({
+            root,
+            el: selectedElement,
+            zoom,
+            onElementMove,
+            onElementResize,
+            guideElementSelector: selector
+          })
+          onElementSelected && onElementSelected(movableTarget)
         }
       } else {
-        movableTarget = setElementMovable(root, selectedElement)
+        movableTarget = setElementMovable({
+          root,
+          el: selectedElement,
+          zoom,
+          onElementMove,
+          onElementResize,
+          guideElementSelector: selector
+        })
+        onElementSelected && onElementSelected(movableTarget)
       }
 
       if (movableGroup) {

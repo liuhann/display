@@ -41,7 +41,7 @@ export default class FrontComponentView {
     component,
     fcInstanceConfig,
     position,
-    context
+    context = {}
   }) {
     this.el = el
     this.fcInstanceConfig = fcInstanceConfig
@@ -651,7 +651,7 @@ export default class FrontComponentView {
       } else {
         el.className = ' element-wrapper'
       }
-      el.setAttribute('id', this.uuid)
+      el.setAttribute('id', this.fcId)
       this.updatePositionStyle()
     }
   }

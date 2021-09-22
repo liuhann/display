@@ -1,7 +1,7 @@
 import Moveable from 'moveable'
 import './style.css'
 
-const setElementMovable = (root, el, guideElementSelector = '.element-wrapper') => {
+const setElementMovable = ({ root, el, zoom, onElementMove, onElementResize, guideElementSelector = '.element-wrapper' }) => {
   const otherWrappers = [...document.querySelectorAll(guideElementSelector)].filter(each => each !== el)
   const moveable = new Moveable(root, {
     // If you want to use a group, set multiple targets(type: Array<HTMLElement | SVGElement>).
@@ -17,7 +17,7 @@ const setElementMovable = (root, el, guideElementSelector = '.element-wrapper') 
     className: 'my-movable',
     renderDirections: ['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'],
     edge: false,
-    zoom: 1,
+    zoom: zoom,
     origin: true,
     padding: { left: 0, top: 0, right: 0, bottom: 0 }
   })
@@ -27,20 +27,30 @@ const setElementMovable = (root, el, guideElementSelector = '.element-wrapper') 
   moveable.on('resizeStart', e => {
   }).on('drag', e => {
     const beforeDelta = e.beforeDelta
-    e.target.fcView && e.target.fcView.setPosition({
-      x: (parseFloat(e.target.style.left) + beforeDelta[0]),
-      y: (parseFloat(e.target.style.top) + beforeDelta[1])
+    onElementMove && onElementMove({
+      x: (parseFloat(e.target.style.left) + beforeDelta[0] * zoom),
+      y: (parseFloat(e.target.style.top) + beforeDelta[1] * zoom)
     })
+    // e.target.fcView && e.target.fcView.setPosition({
+    //   x: (parseFloat(e.target.style.left) + beforeDelta[0]),
+    //   y: (parseFloat(e.target.style.top) + beforeDelta[1])
+    // })
     // e.target.style.left = (parseFloat(e.target.style.left) + beforeDelta[0]) + 'px'
     // e.target.style.top = (parseFloat(e.target.style.top) + beforeDelta[1]) + 'px'
   }).on('resize', e => {
     const beforeDelta = e.drag.beforeDelta
-    e.target.fcView && e.target.fcView.setPosition({
+    onElementResize && onElementResize({
       width: e.width,
       height: e.height,
-      x: (parseFloat(e.target.style.left) + beforeDelta[0]),
-      y: (parseFloat(e.target.style.top) + beforeDelta[1])
+      x: (parseFloat(e.target.style.left) + beforeDelta[0] * zoom),
+      y: (parseFloat(e.target.style.top) + beforeDelta[1] * zoom)
     })
+    // e.target.fcView && e.target.fcView.setPosition({
+    //   width: e.width,
+    //   height: e.height,
+    //   x: (parseFloat(e.target.style.left) + beforeDelta[0]),
+    //   y: (parseFloat(e.target.style.top) + beforeDelta[1])
+    // })
 
     // e.target.style.width = `${e.width}px`
     // e.target.style.height = `${e.height}px`
