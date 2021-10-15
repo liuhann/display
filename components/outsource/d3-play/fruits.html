@@ -1,0 +1,25 @@
+<html>
+<head>
+    <script src="./src/d3.min.js"></script>
+
+</head>
+<body>
+html`<svg viewBox="0 0 ${width} ${height}" style="max-width: ${width}px; font: 10px sans-serif;">
+<g fill="steelblue">
+    ${fruits.map(d => svg`<rect y="${y(d.name)}" x="${x(0)}" width="${x(d.count) - x(0)}" height="${y.bandwidth()}"></rect>`)}
+</g>
+<g fill="white" text-anchor="end" transform="translate(-6,${y.bandwidth() / 2})">
+    ${fruits.map(d => svg`<text y="${y(d.name)}" x="${x(d.count)}" dy="0.35em">${d.count}</text>`)}
+</g>
+${d3.select(svg`<g transform="translate(0,${margin.top})">`)
+    .call(d3.axisTop(x))
+    .call(g => g.select(".domain").remove())
+    .node()}
+${d3.select(svg`<g transform="translate(${margin.left},0)">`)
+    .call(d3.axisLeft(y))
+    .call(g => g.select(".domain").remove())
+    .node()}
+</svg>`
+<script src='./src/fruits.js' />
+</body>
+</html>

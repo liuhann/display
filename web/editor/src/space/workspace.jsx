@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-
+import interact from 'interactjs'
 import Ruler from '../ruler/ruler.jsx'
 import { initSelecto } from 'selectable-movable'
 import { ThemeContext } from 'async-boot-react/src/module/boot-context.js'
@@ -20,9 +20,12 @@ export default ({
   const ref = React.createRef()
   const workspaceRef = React.createRef()
   const sceneRef = React.createRef()
+  const dragRectRef = React.createRef()
 
   const [sceneX, setSceneX] = useState(0)
   const [sceneY, setSceneY] = useState(0)
+  const [dragRect, setDragRect] = useState({})
+  const [actionMove, setActionMove] = useState(false)
   const [elements, setElements] = useState(rootElements)
 
   const onDragEnter = event => {
@@ -62,30 +65,81 @@ export default ({
   useEffect(() => {
     const root = sceneRef.current
 
-    const {
-      movableGroup,
-      movableTarget,
-      selecto
-    } = initSelecto({
-      root: workspaceRef.current,
-      selector: '.element-wrapper',
-      containerDrag: ({ deltaX, deltaY }) => {
-        setSceneX(sceneX => parseFloat(sceneX) + deltaX)
-        setSceneY(sceneY => parseFloat(sceneY) + deltaY)
-      }
-    })
+    interact(root).draggable({
+      /**
+       * 拖拽开始，如果只是点击不会触发拖拽事件。
+       */
+      onstart: event => {
+        if (event.ctrlKey) {
+          setActionMove(true)
+          this.dragRect.withCtrl = true
+        } else {
+          this.dragRect.withCtrl = false
+        }
+        this.dragRect.left = event.x0 - event.rect.left
+        this.dragRect.top = event.y0 - event.rect.top
+        if (this.actionMove) {
+          this.dragRect.visible = false
+        } else {
+          this.dragRect.visible = true
+        }
+      },
+      /**
+       * 拖拽移动
+       */
+      onmove: event => {
+        if (this.actionMove) {
+          // 移动模式
+          this.translateX += event.dx
+          this.translateY += event.dy
+        } else {
+          // 计算正在拖拽的矩形区域
+          this.dragRect.width = event.page.x - event.x0
+          this.dragRect.height = event.page.y - event.y0
+          // 拖拽多选模式
+          // 向右拖拽： 重新计算left
+          if (this.dragRect.width < 0) {
+            this.dragRect.left = event.pageX - event.target.getBoundingClientRect().x
+            this.dragRect.width = -this.dragRect.width
+          }
+          // 向上拖拽： 重新计算top
+          if (this.dragRect.height < 0) {
+            this.dragRect.top = event.pageY - event.target.getBoundingClientRect().y
+            this.dragRect.height = -this.dragRect.height
+          }
 
-    workspaceRef.current.movableGroup = movableGroup
-    workspaceRef.current.movableTarget = movableTarget
+          // 判断矩形交叉的元素设置为选中
+          this.dragRect.x = this.dragRect.left// - this.screenRect.x - this.screenRect.width / 2 * (1 - this.scale)
+          this.dragRect.y = this.dragRect.top// - this.screenRect.y
+          for (let element of this.scene.elements) {
+            if (intersectRect({
+              x: element.x * this.scale + this.translateX,
+              y: element.y * this.scale + this.translateY,
+              width: element.width * this.scale,
+              height: element.height * this.scale
+            }, this.dragRect)) {
+              element.selected = true
+            } else {
+              element.selected = false
+            }
+          }
+        }
+      },
+      /**
+       * 拖拽结束
+       */
+      onend: event => {
+        if (this.dragRect.withCtrl) {
+          this.actionMove = false
+          this.dragRect.withCtrl = false
+        }
+        this.dragRect.visible = false
+        // 取消mouseclick事件的触发
+        this.dragRect.dragged = true
+      }
+    }).styleCursor(false)
 
     return () => {
-      if (movableGroup) {
-        movableGroup.destroy()
-      }
-      if (movableTarget) {
-        movableTarget.destroy()
-      }
-      selecto.destroy()
       for (const child of root.children) {
         root.removeChild(child)
       }
@@ -122,6 +176,8 @@ export default ({
           onDrop={onDrop}
           className='screen' style={screenStyle} ref={sceneRef}
         />
+        <div 
+          className='dragRect' ref={dragRectRef}/>
       </div>
       <Ruler
         type='horizontal'

@@ -13,7 +13,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "selectable-movable": "^1.0.0",
     "@interactjs/actions": "^1.10.11",
     "@interactjs/auto-start": "^1.10.11",
     "@interactjs/interact": "^1.10.11",
@@ -23,9 +22,11 @@
     "async-boot-react": "^1.0.0",
     "display-view": "^1.0.0",
     "display-web-data": "^1.0.0",
+    "interactjs": "^1.10.11",
     "lodash": "^4.17.21",
     "react-draggable": "^4.4.3",
     "redux": "^4.1.1",
+    "selectable-movable": "^1.0.0",
     "selecto": "^1.12.1"
   },
   "devDependencies": {
