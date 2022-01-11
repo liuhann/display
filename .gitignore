@@ -3,7 +3,7 @@
 .idea
 .vscode
 .log
-
+.history
 dist
 build
 

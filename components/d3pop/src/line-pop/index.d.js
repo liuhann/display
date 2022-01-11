@@ -21,18 +21,12 @@ export default {
       value: 90
     }]
   }, {
-    name: 'alt',
-    type: 'string'
+    name: 'colorFrom',
+    type: 'color',
+    value: 'brown'
   }, {
-    name: 'src',
-    type: 'string',
-    control: 'file'
-  }, {
-    name: 'badgeDot',
-    type: 'boolean',
-    value: false
-  }, {
-    name: 'badgeCount',
-    type: 'number'
+    name: 'colorTo',
+    type: 'color',
+    value: 'steelblue'
   }]
 }

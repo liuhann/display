@@ -1,10 +1,8 @@
 import React from 'react'
 import './editor.css'
-import Draggable from 'react-draggable'
 import NavLeft from '../nav-left/NavLeft.jsx'
 import WorkSpace from '../space/workspace.jsx'
 import Toolbar from '../toolbar/Toolbar.jsx'
-import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 import { ThemeContext } from 'async-boot-react/src/module/boot-context.js'
 
 import { AssetDAO } from 'display-web-data'
@@ -28,8 +26,6 @@ export default class Editor extends React.Component {
     }
   }
 
-  static contextType = ThemeContext
-
   componentDidMount () {
     this.doStartEditor()
   }
@@ -39,7 +35,7 @@ export default class Editor extends React.Component {
   }
 
   async fetchAssetTree () {
-    const { config  } = this.context
+    const { config } = this.context
     console.log('context store', this.context.store)
     this.assetDao = new AssetDAO(config.serviceUrl)
     const assets = await this.assetDao.getPublicAssets()
@@ -123,62 +119,9 @@ export default class Editor extends React.Component {
 
     return (
       <div id='editor'>
-        <div className='main-content'>
-          {!fullScreen &&
-            <Draggable
-              axis='x'
-              defaultClassName='nav-drag'
-              defaultClassNameDragging='nav-dragging'
-              bounds={{ left: 200 }}
-              defaultPosition={{ x: this.state.navWidth, y: 0 }}
-              onDrag={handleDrag}
-            >
-              <div />
-            </Draggable>}
-
-          {showPanel && !fullScreen &&
-            <Draggable
-              axis='x'
-              defaultClassName='panel-drag'
-              defaultClassNameDragging='nav-dragging'
-              defaultPosition={{ x: workspaceWidth + this.state.navWidth, y: 0 }}
-              onDrag={handlePanelDrag}
-            >
-              <div />
-            </Draggable>}
-
-          {!fullScreen &&
-            <div
-              className='nav-wrapper' style={{
-                width: this.state.navWidth + 'px'
-              }}
-            >
-              <div className='nav-content'>
-                <NavLeft treeData={treeData} checked={this.getLayoutAttrs()} onCommand={onLeftNavMenuCommand} />
-              </div>
-            </div>}
-
-          <div
-            className='main' style={mainStyle}
-          >
-            <div
-              className='workspace' style={{
-                width: workspaceWidth + 'px'
-              }}
-            >
-              <Toolbar shows={toolbarShow} onShowChange={onToolbarShowChange} />
-              <WorkSpace zoom={toolbarShow.scale} rootElements={[]} width={workspaceWidth} height={fullScreen ? (windowHeight - 40) : (windowHeight - 60)} />
-            </div>
-            {showPanel && !fullScreen &&
-              <div
-                className='panel' style={{
-                  left: showPanel ? (workspaceWidth + 'px') : 0
-                }}
-              >
-                <HighlightOffIcon onClick={closePanel} size='small' color='primary' style={{ cursor: 'pointer', position: 'absolute', right: '10px', top: '10px' }} />
-              </div>}
-          </div>
-        </div>
+        <div id='panel-container' />
+        <div id='toolbar-container' />
+        <div id='screen-container' />
       </div>
     )
   }
