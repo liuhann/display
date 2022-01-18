@@ -1,13 +1,6 @@
 import React from 'react'
 import './editor.css'
-import NavLeft from '../nav-left/NavLeft.jsx'
 import WorkSpace from '../space/workspace.jsx'
-import Toolbar from '../toolbar/Toolbar.jsx'
-import { ThemeContext } from 'async-boot-react/src/module/boot-context.js'
-
-import { AssetDAO } from 'display-web-data'
-
-import toTreeData from '../model/toTreeData.js'
 
 export default class Editor extends React.Component {
   constructor () {
@@ -15,113 +8,28 @@ export default class Editor extends React.Component {
     this.state = {
       windowWidth: document.body.offsetWidth,
       windowHeight: document.body.offsetHeight,
-      navWidth: 260,
-      panelWidth: 340,
-      showPanel: true,
-      treeData: [],
-      toolbarShow: {
-        scale: 1,
-        fullScreen: false
+      scene: {
+        elements: [{
+          id: 1,
+          x: 10,
+          y: 10,
+          width: 200,
+          height: 300
+        }]
       }
     }
   }
 
   componentDidMount () {
-    this.doStartEditor()
-  }
-
-  async doStartEditor () {
-    this.fetchAssetTree()
-  }
-
-  async fetchAssetTree () {
-    const { config } = this.context
-    console.log('context store', this.context.store)
-    this.assetDao = new AssetDAO(config.serviceUrl)
-    const assets = await this.assetDao.getPublicAssets()
-    this.setState({
-      treeData: toTreeData(assets.data, config.loader)
-    })
-  }
-
-  getLayoutAttrs () {
-    const layoutAttrs = []
-    if (this.state.showPanel) {
-      layoutAttrs.push('prop-panel')
-    }
-    return layoutAttrs
   }
 
   render () {
-    const { windowWidth, windowHeight, navWidth, panelWidth, showPanel, toolbarShow, treeData } = this.state
-
-    // 切换全屏的操作
-    const { fullScreen } = toolbarShow
-    let workspaceWidth = 0
-    if (fullScreen) {
-      workspaceWidth = windowWidth
-    } else if (showPanel) {
-      workspaceWidth = windowWidth - navWidth - 20 - panelWidth
-    } else {
-      workspaceWidth = windowWidth - navWidth - 20
-    }
-
-    // 拖拽左侧导航及右侧面板的响应事件
-    const handleDrag = (e, data) => {
-      this.setState({
-        navWidth: this.state.navWidth + data.deltaX
-      })
-    }
-    const handlePanelDrag = (e, data) => {
-      this.setState({
-        panelWidth: this.state.panelWidth - data.deltaX
-      })
-    }
-
-    // 左侧导航菜单切换事件
-    const onLeftNavMenuCommand = (cmd) => {
-      switch (cmd) {
-        case 'toggle-panel':
-          this.setState({
-            showPanel: !this.state.showPanel
-          })
-      }
-    }
-
-    // 关闭面板处理
-    const closePanel = () => {
-      this.setState({
-        showPanel: false
-      })
-    }
-
-    // Toolbar show切换事件
-    const onToolbarShowChange = (show) => {
-      this.setState({
-        toolbarShow: Object.assign(toolbarShow, show)
-      })
-    }
-
-    const mainStyle = {
-      left: (navWidth + 10) + 'px',
-      top: '10px',
-      bottom: '10px',
-      right: '10px',
-      borderRadius: '4px'
-    }
-    if (fullScreen) {
-      mainStyle.left = 0
-      mainStyle.top = 0
-      mainStyle.bottom = 0
-      mainStyle.borderRadius = 0
-      mainStyle.right = 0
-    }
-
+    const { windowWidth, navWidth, panelWidth, showPanel, toolbarShow, scene } = this.state
     return (
-      <div id='editor'>
+      <div id='root'>
         <div id='panel-container' />
         <div id='toolbar-container' />
-        <div id='screen-container' />
+        <WorkSpace elements={scene.elements} width={640} height={480} />
       </div>
     )
   }

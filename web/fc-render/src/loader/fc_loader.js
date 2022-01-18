@@ -121,7 +121,7 @@ export default class FCLoader {
       }
 
       // name 直接提供完整地址的情况
-      const ff = new FontFace(fontFaceName, `url(${fontUrl})`)
+      const ff = new window.FontFace(fontFaceName, `url(${fontUrl})`)
 
       await ff.load()
       document.fonts.add(ff)
