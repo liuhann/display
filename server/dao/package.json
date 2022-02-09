@@ -1,0 +1,19 @@
+{
+  "name": "wind-core-dao",
+  "version": "1.1.0",
+  "description": "数据存取接口定义模块",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node ./test/start.js",
+    "build": "babel src -d build"
+  },
+  "author": "liuhann@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "wind-boot": "^2.0.0",
+    "wind-core-http": "^2.0.0",
+    "lodash-id": "^0.14.0",
+    "lowdb": "^1.0.0",
+    "make-dir": "^3.1.0"
+  }
+}

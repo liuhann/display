@@ -1,0 +1,27 @@
+{
+  "name": "wind-app-service",
+  "version": "1.0.15",
+  "description": "组态应用管理服务",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "ts": "node --inspect=5858 ./work/start.js"
+  },
+  "author": {
+    "name": "刘晗",
+    "email": "liuhan@goldwind.com.cn"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^26.6.3",
+    "jest-sonar": "^0.2.12"
+  },
+  "dependencies": {
+    "wind-core-dao": "^1.1.0",
+    "wind-core-http": "^2.0.0",
+    "wind-dao-nedb": "^1.1.0",
+    "bson-objectid": "^2.0.1",
+    "debug": "^4.3.2"
+  }
+}

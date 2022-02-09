@@ -1,0 +1,20 @@
+.my-movable .moveable-control {
+	position: absolute;
+	width: 8px!important;
+	height: 8px!important;
+	border-radius: 0!important;
+	border: 1px solid #2d88e3!important;
+	box-sizing: border-box;
+	background: #fff!important;
+	margin-top: -4px!important;
+    margin-left: -4px!important;
+    z-index: 10;
+}
+
+.my-movable .moveable-line {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	background: #2d88e3!important;
+	transform-origin: 0px 0.5px;
+}

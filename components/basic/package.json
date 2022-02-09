@@ -1,0 +1,13 @@
+{
+  "name": "display-basic",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "build-fc",
+    "build-src": "build-fc --no-minimize",
+    "storybook": "start-storybook -p 6006"
+  },
+  "author": "",
+  "license": "ISC"
+}

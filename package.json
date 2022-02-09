@@ -1,0 +1,29 @@
+{
+  "name": "display",
+  "private": true,
+  "scripts": {
+    "editor": "npm run serve --workspace=display-app"
+  },
+  "workspaces": [
+    "utils/*",
+    "web/*",
+    "server/*",
+    "components/*"
+  ],
+  "devDependencies": {
+    "@storybook/addon-actions": "^6.3.4",
+    "@storybook/addon-essentials": "^6.3.4",
+    "@storybook/addon-links": "^6.3.4",
+    "@storybook/builder-webpack5": "^6.3.4",
+    "@storybook/manager-webpack5": "^6.3.4",
+    "@storybook/react": "^6.3.4",
+    "lerna": "^4.0.0",
+    "standard": "^16.0.3",
+    "tailwindcss": "^3.0.12"
+  },
+  "dependencies": {
+    "moveable": "^0.26.0",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0"
+  }
+}

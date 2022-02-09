@@ -1,0 +1,22 @@
+{
+  "name": "display-render",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "display-pack-externals": "^1.0.0",
+    "debug": "^4.3.1",
+    "ky": "^0.24.0",
+    "loadjs": "^4.2.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "resolve": "^1.17.0",
+    "resolve-path": "^1.4.0",
+    "vue": "^2.6.10"
+  },
+  "author": "",
+  "license": "ISC"
+}
