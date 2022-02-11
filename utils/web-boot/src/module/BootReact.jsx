@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
 import { isArray, isFunction } from '../utils/lang'
 import ErrorBoundary from './ErrorBoundary.jsx'
@@ -8,12 +8,7 @@ import { ThemeContext } from './boot-context.js'
 
 export default {
   async load (ctx) {
-    const options = {
-      router: true,
-      mode: 'hash'
-    }
-    Object.assign(options, ctx.bootOpts)
-    ctx._routes = []
+    await import('React')
   },
 
   async onModuleLoad (module, ctx) {

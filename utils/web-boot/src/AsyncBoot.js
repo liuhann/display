@@ -1,8 +1,12 @@
 import contextProto from './utils/context'
-import { isFunction } from './utils/lang'
+import { isArray, isFunction } from './utils/lang'
 import compose from 'koa-compose'
+import page from 'page'
 
-import BootReact from './module/BootReact.jsx'
+import { VannilaRenderer } from 'fc-render'
+
+import BootReact from './module/BootReact.js'
+import BootVue from './module/BootVue.js'
 
 /**
  * Boot class
@@ -22,11 +26,10 @@ class AsyncBoot {
     // page context
     this.ctx = Object.create(contextProto)
     Object.assign(this.ctx, bootOpts)
-    this.ctx.bootOpts = bootOpts
-    this.ctx.config = bootOpts.config || {}
-    this.ctx.booter = this
+    this.ctx.page = page
     this.systemModules = {
-      react: BootReact
+      react: BootReact,
+      vue: BootVue
     }
 
     // application modules  (load on startUp)
@@ -74,13 +77,28 @@ class AsyncBoot {
       let module = def
       // 以import形式引入的module
       if (isFunction(def)) {
-        module = await def()
+        module = await def(this)
       }
       for (const moduleHanlder of this.moduleHanlders) {
-        moduleHanlder(module, this.ctx)
+        moduleHanlder(module, this)
       }
       if (isFunction(module.onload)) {
         await module.onload(this.ctx, this.ctx.config || {})
+      }
+      if (isArray(module.routes)) {
+        for (const route of module.routes) {
+          page(route.path, (ctx, next) => {
+            if (route.Component) {
+              Object.assign(this.ctx, ctx)
+              if (this.ctx.$el) {
+                ctx.render = new VannilaRenderer(route.Component, this.ctx.$el, {
+                  ctx: this.ctx
+                })
+              }
+            }
+            next()
+          })
+        }
       }
       this.modules.push(module)
     }

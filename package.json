@@ -2,7 +2,7 @@
   "name": "display",
   "private": true,
   "scripts": {
-    "editor": "npm run serve --workspace=display-app"
+    "serve": "npm run serve --workspace=web-start"
   },
   "workspaces": [
     "utils/*",
@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "moveable": "^0.26.0",
+    "page": "^1.11.6",
     "react": "^16.14.0",
     "react-dom": "^16.14.0"
   }
