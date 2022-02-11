@@ -5,13 +5,14 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "webpack serve --open",
+    "serve": "webpack serve",
     "build": "webpack --config webpack.config.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "web-boot": "^1.0.0"
+    "web-boot": "^1.0.0",
+    "three-start": "^1.0.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.14.5",

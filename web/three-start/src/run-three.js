@@ -1,6 +1,6 @@
 import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshBasicMaterial, Mesh } from 'three'
 
-export default ({ ctx }) => {
+export default (el, { ctx }) => {
   // Option 2: Import just the parts you need.
   const scene = new Scene()
 

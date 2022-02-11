@@ -11,6 +11,8 @@ module.exports = {
   },
   devtool: 'inline-source-map',
   devServer: {
+    historyApiFallback: true,
+    publicPath: '/',
     contentBase: './dist'
   },
   module: {
@@ -80,6 +82,7 @@ module.exports = {
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: 'Development',
+      publicPath: '/',
       template: path.resolve(__dirname, './index.html')
     })
   ]

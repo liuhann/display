@@ -40,14 +40,14 @@ class AsyncBoot {
 
   async startUp () {
     await this.loadSystemModules()
-    await this.loadModules(this.ctx.bootOpts.packages)
+    await this.loadModules(this.ctx.packages)
     await this.started()
   }
 
   async loadSystemModules () {
     const awaits = []
     for (const key in this.systemModules) {
-      awaits.push(this.use(this.systemModules[key], this.ctx.bootOpts[key]))
+      awaits.push(this.use(this.systemModules[key]))
     }
     await Promise.all(awaits)
   }
@@ -87,14 +87,17 @@ class AsyncBoot {
       }
       if (isArray(module.routes)) {
         for (const route of module.routes) {
-          page(route.path, (ctx, next) => {
+          page(route.path, async (ctx, next) => {
             if (route.Component) {
-              Object.assign(this.ctx, ctx)
-              if (this.ctx.$el) {
-                ctx.render = new VannilaRenderer(route.Component, this.ctx.$el, {
-                  ctx: this.ctx
-                })
+              let Component = route.Component
+
+              if (Component.then) {
+                Component = (await Component).default
               }
+              Object.assign(this.ctx, ctx)
+              ctx.render = new VannilaRenderer(Component, this.ctx.$el, {
+                ctx: this.ctx
+              })
             }
             next()
           })

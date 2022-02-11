@@ -8,7 +8,10 @@ const app = new WebBoot({
   config: {
     serviceUrl
   },
-  packages: [threeDemo]
+  packages: [threeDemo],
+  started: ctx => {
+    ctx.page({})
+  }
 })
 
 app.startUp()
