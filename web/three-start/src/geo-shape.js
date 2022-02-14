@@ -24,8 +24,13 @@ export default (el, { ctx }) => {
     scene = new THREE.Scene()
     scene.background = new THREE.Color(0xf0f0f0)
 
-    camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000)
-    camera.position.set(100, 100, 500)
+    // camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight * 3 / 4, window.innerHeight / -2, 1, 400)
+    camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1600, 2000)
+    camera.position.set(500, 100, 1920)
+    camera.lookAt(500, 0, 0)
+
+    // camera = new THREE.ArrayCamera(cameras)
+    // camera.position.z = 10
     scene.add(camera)
 
     const light = new THREE.PointLight(0xffffff, 0.8)
@@ -95,7 +100,7 @@ export default (el, { ctx }) => {
       // solid line
 
       let line = new THREE.Line(geometryPoints, new THREE.LineBasicMaterial({ color: color }))
-      line.position.set(x, y, z - 25)
+      line.position.set(x, y, z - 15)
       line.rotation.set(rx, ry, rz)
       line.scale.set(s, s, s)
       group.add(line)
@@ -103,7 +108,7 @@ export default (el, { ctx }) => {
       // line from equidistance sampled points
 
       line = new THREE.Line(geometrySpacedPoints, new THREE.LineBasicMaterial({ color: color }))
-      line.position.set(x, y, z + 25)
+      line.position.set(x, y, z + 30)
       line.rotation.set(rx, ry, rz)
       line.scale.set(s, s, s)
       group.add(line)
@@ -111,7 +116,7 @@ export default (el, { ctx }) => {
       // vertices from real points
 
       let particles = new THREE.Points(geometryPoints, new THREE.PointsMaterial({ color: color, size: 4 }))
-      particles.position.set(x, y, z + 75)
+      particles.position.set(x, y, z + 60)
       particles.rotation.set(rx, ry, rz)
       particles.scale.set(s, s, s)
       group.add(particles)
@@ -119,7 +124,7 @@ export default (el, { ctx }) => {
       // equidistance sampled points
 
       particles = new THREE.Points(geometrySpacedPoints, new THREE.PointsMaterial({ color: color, size: 4 }))
-      particles.position.set(x, y, z + 125)
+      particles.position.set(x, y, z + 400)
       particles.rotation.set(rx, ry, rz)
       particles.scale.set(s, s, s)
       group.add(particles)
@@ -286,17 +291,33 @@ export default (el, { ctx }) => {
 
     // addShape( shape, color, x, y, z, rx, ry,rz, s );
 
-    addShape(californiaShape, extrudeSettings, 0xf08000, -300, -100, 0, 0, 0, 0, 1)
-    addShape(triangleShape, extrudeSettings, 0x8080f0, -180, 0, 0, 0, 0, 0, 1)
-    addShape(roundedRectShape, extrudeSettings, 0x008000, -150, 150, 0, 0, 0, 0, 1)
-    addShape(trackShape, extrudeSettings, 0x008080, 200, -100, 0, 0, 0, 0, 1)
-    addShape(squareShape, extrudeSettings, 0x0040f0, 150, 100, 0, 0, 0, 0, 1)
-    addShape(heartShape, extrudeSettings, 0xf00000, 60, 100, 0, 0, 0, Math.PI, 1)
-    addShape(circleShape, extrudeSettings, 0x00f000, 120, 250, 0, 0, 0, 0, 1)
-    addShape(fishShape, extrudeSettings, 0x404040, -60, 200, 0, 0, 0, 0, 1)
-    addShape(smileyShape, extrudeSettings, 0xf000f0, -200, 250, 0, 0, 0, Math.PI, 1)
-    addShape(arcShape, extrudeSettings, 0x804000, 150, 0, 0, 0, 0, 0, 1)
-    addShape(splineShape, extrudeSettings, 0x808080, -50, -100, 0, 0, 0, 0, 1)
+    // addShape(californiaShape, extrudeSettings, 0xf08000, -300, -100, 0, 0, 0, 0, 1)
+    // addShape(triangleShape, extrudeSettings, 0x8080f0, -180, 0, 0, 0, 0, 0, 1)
+    // addShape(roundedRectShape, extrudeSettings, 0x008000, -150, 150, 0, 0, 0, 0, 1)
+    // addShape(trackShape, extrudeSettings, 0x008080, 200, -100, 0, 0, 0, 0, 1)
+    // addShape(squareShape, extrudeSettings, 0x0040f0, 150, 100, 0, 0, 0, 0, 1)
+    // addShape(heartShape, extrudeSettings, 0xf00000, 60, 100, 0, 0, 0, Math.PI, 1)
+    // addShape(circleShape, extrudeSettings, 0x00f000, 120, 250, 0, 0, 0, 0, 1)
+    // addShape(fishShape, extrudeSettings, 0x404040, -60, 200, 0, 0, 0, 0, 1)
+    // addShape(smileyShape, extrudeSettings, 0xf000f0, -200, 250, 0, 0, 0, Math.PI, 1)
+    // addShape(arcShape, extrudeSettings, 0x804000, 150, 0, 0, 0, 0, 0, 1)
+    // addShape(splineShape, extrudeSettings, 0x808080, -50, -100, 0, 0, 0, 0, 1)
+
+    const allShapes = [californiaShape, triangleShape, roundedRectShape, trackShape, squareShape, heartShape, circleShape, fishShape, smileyShape, arcShape, splineShape]
+
+    allShapes.forEach((shape, index) => {
+      addShape(shape, extrudeSettings, 0xf08000, index * 150, 0, 200, 0, 0, 0, 1)
+    })
+    // addShape(triangleShape, extrudeSettings, 0x8080f0, 150, 200, 0, 0, 0, 0, 1)
+    // addShape(roundedRectShape, extrudeSettings, 0x008000, 300, 200, 0, 0, 0, 0, 1)
+    // addShape(trackShape, extrudeSettings, 0x008080, 450, 200, 0, 0, 0, 0, 1)
+    // addShape(squareShape, extrudeSettings, 0x0040f0, 600, 200, 0, 0, 0, 0, 1)
+    // addShape(heartShape, extrudeSettings, 0xf00000, 60, 200, 0, 0, 0, Math.PI, 1)
+    // addShape(circleShape, extrudeSettings, 0x00f000, 120, 200, 0, 0, 0, 0, 1)
+    // addShape(fishShape, extrudeSettings, 0x404040, -60, 200, 0, 0, 0, 0, 1)
+    // addShape(smileyShape, extrudeSettings, 0xf000f0, -200, 200, 0, 0, 0, Math.PI, 1)
+    // addShape(arcShape, extrudeSettings, 0x804000, 150, 200, 0, 0, 0, 0, 1)
+    // addShape(splineShape, extrudeSettings, 0x808080, -50, 200, 0, 0, 0, 0, 1)
 
     addLineShape(arcShape.holes[0], 0x804000, 150, 0, 0, 0, 0, 0, 1)
 
@@ -367,7 +388,8 @@ export default (el, { ctx }) => {
   }
 
   function render () {
-    group.rotation.y += (targetRotation - group.rotation.y) * 0.05
+    // group.rotation.y += (targetRotation - group.rotation.y) * 0.05
+    camera.position.set(500 + pointerX, 500, 1900)
     renderer.render(scene, camera)
   }
 
