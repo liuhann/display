@@ -1,3 +1,4 @@
+import './normalize.css'
 import WebBoot from 'web-boot'
 
 import threeDemo from 'three-start'
