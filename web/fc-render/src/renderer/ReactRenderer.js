@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
-// import React from 'react';
-// import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
 // 这里需要注释掉React、ReactDOM 否则此包会同外围编辑器等项目一起使用。而开发期间的图元的React是额外load的，会在
 // React hook 使用时报错 因此，React一定要使用window全局的React对象
 import Renderer from './Renderer'
@@ -26,7 +26,7 @@ export default class ReactRenderer extends Renderer {
     this.props.refCallback = ref => {
       this.renderRef = ref
     }
-    this.renderRef = ReactDOM.render(React.createElement(JSXComponent, this.props), el)
+    ReactDOM.render(React.createElement(JSXComponent, this.props), el)
   }
 
   /**

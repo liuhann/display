@@ -12,7 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "web-boot": "^1.0.0",
-    "three-start": "^1.0.0"
+    "three-start": "^1.0.0",
+    "flat-editor": "^1.0.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.14.5",

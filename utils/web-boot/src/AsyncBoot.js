@@ -3,7 +3,7 @@ import { isArray, isFunction } from './utils/lang'
 import compose from 'koa-compose'
 import page from 'page'
 
-import { VannilaRenderer } from 'fc-render'
+import { ReactRenderer, VannilaRenderer } from 'fc-render'
 
 import BootReact from './module/BootReact.js'
 import BootVue from './module/BootVue.js'
@@ -94,10 +94,20 @@ class AsyncBoot {
               if (Component.then) {
                 Component = (await Component).default
               }
+
               Object.assign(this.ctx, ctx)
-              ctx.render = new VannilaRenderer(Component, this.ctx.$el, {
-                ctx: this.ctx
-              })
+              if (route.el) {
+                this.ctx.$el = document.querySelector(route.el)
+              }
+              if (route.type === 'react') {
+                ctx.render = new ReactRenderer(Component, this.ctx.$el, {
+                  ctx: this.ctx
+                })
+              } else {
+                ctx.render = new VannilaRenderer(Component, this.ctx.$el, {
+                  ctx: this.ctx
+                })
+              }
             }
             next()
           })
