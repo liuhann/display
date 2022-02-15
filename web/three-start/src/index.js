@@ -8,5 +8,8 @@ export default {
   }, {
     path: '/demo/texture',
     Component: import('./texture.js')
+  }, {
+    path: '/demo/landscape',
+    Component: import('./landscape.js')
   }]
 }

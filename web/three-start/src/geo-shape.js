@@ -62,7 +62,6 @@ export default (el, { ctx }) => {
       mesh.rotation.set(rx, ry, rz)
       mesh.scale.set(s, s, s)
       group.add(mesh)
-
       // flat shape
 
       geometry = new THREE.ShapeGeometry(shape)
